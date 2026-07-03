@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Product, MediaItem } from '../types';
 import { FACTORY_PHOTOS_PRESETS, DEFAULT_MEDIA_LIBRARY } from '../data';
@@ -27,8 +27,34 @@ export const AdminProductsEditor: React.FC<AdminProductsEditorProps> = ({
   const [saveSuccessMessage, setSaveSuccessMessage] = useState("");
   const [activeSlideForPicker, setActiveSlideForPicker] = useState<number | null>(null);
 
+  const quickPhotos = useMemo(() => {
+    const list: { label: string; url: string }[] = [];
+    const seenUrls = new Set<string>();
+
+    if (mediaList && Array.isArray(mediaList)) {
+      mediaList.forEach(item => {
+        if (item.url && !seenUrls.has(item.url)) {
+          seenUrls.add(item.url);
+          list.push({
+            label: item.name.replace(/\.[^/.]+$/, ""),
+            url: item.url
+          });
+        }
+      });
+    }
+
+    FACTORY_PHOTOS_PRESETS.forEach(preset => {
+      if (preset.url && !seenUrls.has(preset.url)) {
+        seenUrls.add(preset.url);
+        list.push(preset);
+      }
+    });
+
+    return list;
+  }, [mediaList]);
+
   const handleStartAdd = () => {
-    const defaultImg = FACTORY_PHOTOS_PRESETS[0]?.url || "";
+    const defaultImg = quickPhotos[0]?.url || FACTORY_PHOTOS_PRESETS[0]?.url || "";
     const newProd: Product = {
       id: `prod-${Date.now()}`,
       title: "Новое покрытие для КРС",
@@ -433,8 +459,8 @@ export const AdminProductsEditor: React.FC<AdminProductsEditorProps> = ({
                 <Sparkles className="w-4 h-4 text-emerald-400" />
                 <span>Быстрый выбор из фотобанка завода (Нажмите, чтобы добавить фото в слайдер):</span>
               </span>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1">
-                {FACTORY_PHOTOS_PRESETS.map((preset, idx) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1 max-h-64 overflow-y-auto pr-1">
+                {quickPhotos.map((preset, idx) => (
                   <button
                     key={idx}
                     type="button"

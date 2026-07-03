@@ -127,3 +127,12 @@ export interface AdminUser {
   createdAt: string;
 }
 
+export interface MediaItem {
+  id: string;
+  name: string;
+  url: string;
+  size?: string;
+  uploadedAt: string;
+}
+
+

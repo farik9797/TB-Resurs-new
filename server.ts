@@ -6,8 +6,11 @@ import { createServer as createViteServer } from "vite";
 const SETTINGS_FILE = path.join(process.cwd(), "settings.json");
 const USERS_FILE = path.join(process.cwd(), "users.json");
 const PRODUCTS_FILE = path.join(process.cwd(), "products.json");
+const MEDIA_FILE = path.join(process.cwd(), "media.json");
 
 let currentProducts: any[] | null = null;
+let currentMedia: any[] | null = null;
+
 
 let currentSettings = {
   phone: "+7 915 638-72-59",
@@ -75,8 +78,15 @@ try {
       currentProducts = loaded;
     }
   }
+  if (fs.existsSync(MEDIA_FILE)) {
+    const data = fs.readFileSync(MEDIA_FILE, "utf-8");
+    const loaded = JSON.parse(data);
+    if (Array.isArray(loaded) && loaded.length > 0) {
+      currentMedia = loaded;
+    }
+  }
 } catch (e) {
-  console.log("Using default settings, users and products");
+  console.log("Using default settings, users, products and media");
 }
 
 
@@ -133,7 +143,8 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: "50mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
   // Auth & Admin Users API
   app.post("/api/auth/login", (req, res) => {
@@ -239,6 +250,35 @@ async function startServer() {
       });
     } catch (err) {
       res.status(500).json({ success: false, message: "Ошибка сохранения каталога" });
+    }
+  });
+
+  app.get("/api/media", (req, res) => {
+    res.json({
+      success: true,
+      media: currentMedia
+    });
+  });
+
+  app.post("/api/media", (req, res) => {
+    try {
+      const { media } = req.body;
+      if (!Array.isArray(media)) {
+        return res.status(400).json({ success: false, message: "Неверный формат медиатеки" });
+      }
+      currentMedia = media;
+      try {
+        fs.writeFileSync(MEDIA_FILE, JSON.stringify(currentMedia, null, 2), "utf-8");
+      } catch (err) {
+        console.error("Could not write media to disk:", err);
+      }
+      res.json({
+        success: true,
+        message: "Медиатека успешно обновлена",
+        media: currentMedia
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: "Ошибка сохранения медиатеки" });
     }
   });
 

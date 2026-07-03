@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LeadItem, SiteSettings, AdminUser, Product } from '../types';
-import { DEFAULT_SETTINGS, PRODUCTS_DATA } from '../data';
+import { LeadItem, SiteSettings, AdminUser, Product, MediaItem } from '../types';
+import { DEFAULT_SETTINGS, PRODUCTS_DATA, DEFAULT_MEDIA_LIBRARY } from '../data';
 import { AdminProductsEditor } from './AdminProductsEditor';
+import { AdminMediaLibrary } from './AdminMediaLibrary';
 import { 
   Lock, User, Key, LogIn, LogOut, ArrowLeft, RefreshCw, Building2, 
   FileSpreadsheet, Phone, Mail, MapPin, Clock, Send, Image, FileText, 
-  BarChart3, Globe, Code, Check, Save, Inbox, LayoutTemplate, Users, UserPlus, Trash2, ShieldAlert, Package
+  BarChart3, Globe, Code, Check, Save, Inbox, LayoutTemplate, Users, UserPlus, Trash2, ShieldAlert, Package, HardDrive
 } from 'lucide-react';
 
 interface AdminPanelPageProps {
@@ -39,9 +40,19 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Dashboard state
-  const [activeTab, setActiveTab] = useState<'leads' | 'products' | 'contacts' | 'branding' | 'content' | 'seo' | 'users'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'products' | 'media' | 'contacts' | 'branding' | 'content' | 'seo' | 'users'>('leads');
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [usersList, setUsersList] = useState<AdminUser[]>([]);
+  const [mediaList, setMediaList] = useState<MediaItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("tb_resurs_media");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return DEFAULT_MEDIA_LIBRARY;
+  });
   const [loadingLeads, setLoadingLeads] = useState(false);
   const [serverHealth, setServerHealth] = useState<any>(null);
 
@@ -128,10 +139,11 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   const fetchData = async () => {
     setLoadingLeads(true);
     try {
-      const [leadsRes, healthRes, usersRes] = await Promise.all([
+      const [leadsRes, healthRes, usersRes, mediaRes] = await Promise.all([
         fetch("/api/leads"),
         fetch("/api/health"),
-        fetch("/api/users")
+        fetch("/api/users"),
+        fetch("/api/media")
       ]);
       if (leadsRes.ok) {
         const leadsJson = await leadsRes.json();
@@ -144,6 +156,12 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
       if (usersRes.ok) {
         const usersJson = await usersRes.json();
         if (usersJson.success) setUsersList(usersJson.users);
+      }
+      if (mediaRes.ok) {
+        const mediaJson = await mediaRes.json();
+        if (mediaJson.success && Array.isArray(mediaJson.media) && mediaJson.media.length > 0) {
+          setMediaList(mediaJson.media);
+        }
       }
     } catch (e) {
       // Local fallback for users
@@ -161,6 +179,20 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
     } finally {
       setLoadingLeads(false);
     }
+  };
+
+  const handleSaveMedia = async (updatedList: MediaItem[]) => {
+    setMediaList(updatedList);
+    try {
+      localStorage.setItem("tb_resurs_media", JSON.stringify(updatedList));
+    } catch (e) {}
+    try {
+      await fetch("/api/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ media: updatedList })
+      });
+    } catch (e) {}
   };
 
   useEffect(() => {
@@ -462,6 +494,17 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
             <span>Товары и слайды ({productsList.length})</span>
           </button>
           <button
+            onClick={() => setActiveTab('media')}
+            className={`flex-1 py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
+              activeTab === 'media'
+                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <HardDrive className="w-4 h-4 text-emerald-400" />
+            <span>Медиатека ({mediaList.length})</span>
+          </button>
+          <button
             onClick={() => setActiveTab('contacts')}
             className={`flex-1 py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'contacts'
@@ -626,6 +669,15 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
             <AdminProductsEditor
               products={productsList}
               onSaveProducts={handleSaveProductsCatalog}
+              mediaList={mediaList}
+              onSaveMedia={handleSaveMedia}
+            />
+          )}
+
+          {activeTab === 'media' && (
+            <AdminMediaLibrary
+              mediaList={mediaList}
+              onSaveMedia={handleSaveMedia}
             />
           )}
 

@@ -1,4 +1,4 @@
-import { Product, FarmZone, DocumentItem, TestimonialItem, FaqItem, SiteSettings } from "./types";
+import { Product, FarmZone, DocumentItem, TestimonialItem, FaqItem, SiteSettings, MediaItem } from "./types";
 import stallImg1 from "./assets/images/cow_stall_rubber_mat_1783082539703.jpg";
 import stallImg2 from "./assets/images/rubber_cattle_mat_studded_1783082575097.jpg";
 import stallImg3 from "./assets/images/cattle_mats_truck_delivery_1783082597445.jpg";
@@ -20,6 +20,19 @@ export const FACTORY_PHOTOS_PRESETS = [
   { label: "Склад поддонов с готовой продукцией", url: puzzleImg4 },
   { label: "Мат с шипами и шагренью в разрезе", url: puzzleImg5 }
 ];
+
+export const DEFAULT_MEDIA_LIBRARY: MediaItem[] = [
+  { id: "media-1", name: "Стойломесто (коровы лежа в боксе).jpg", url: stallImg1, size: "320 KB", uploadedAt: "2026-06-01" },
+  { id: "media-2", name: "Протектор с шипами (нижний слой).jpg", url: stallImg2, size: "285 KB", uploadedAt: "2026-06-01" },
+  { id: "media-3", name: "Доставка заводской фурой на ферму.jpg", url: stallImg3, size: "410 KB", uploadedAt: "2026-06-01" },
+  { id: "media-4", name: "Аллея и проходы (мокрый пол).jpg", url: stallImg4, size: "350 KB", uploadedAt: "2026-06-01" },
+  { id: "media-5", name: "Паз-шип мозаика (вид сверху).jpg", url: puzzleImg1, size: "290 KB", uploadedAt: "2026-06-01" },
+  { id: "media-6", name: "Квадратный паз-шип мат.jpg", url: puzzleImg2, size: "310 KB", uploadedAt: "2026-06-01" },
+  { id: "media-7", name: "Замок «Ласточкин хвост» крупно.jpg", url: puzzleImg3, size: "260 KB", uploadedAt: "2026-06-01" },
+  { id: "media-8", name: "Склад поддонов с готовой продукцией.jpg", url: puzzleImg4, size: "440 KB", uploadedAt: "2026-06-01" },
+  { id: "media-9", name: "Мат с шипами и шагренью в разрезе.jpg", url: puzzleImg5, size: "275 KB", uploadedAt: "2026-06-01" }
+];
+
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   phone: "+7 915 638-72-59",

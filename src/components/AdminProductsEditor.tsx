@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Product } from '../types';
-import { FACTORY_PHOTOS_PRESETS } from '../data';
+import { Product, MediaItem } from '../types';
+import { FACTORY_PHOTOS_PRESETS, DEFAULT_MEDIA_LIBRARY } from '../data';
+import { AdminMediaLibrary } from './AdminMediaLibrary';
 import { 
   Plus, Edit3, Trash2, ArrowUp, ArrowDown, Copy, Check, X, 
-  Image as ImageIcon, Sparkles, Layers, ListChecks, Sliders, Eye
+  Image as ImageIcon, Sparkles, Layers, ListChecks, Sliders, Eye, HardDrive, Upload
 } from 'lucide-react';
 
 interface AdminProductsEditorProps {
   products: Product[];
   onSaveProducts: (updatedList: Product[]) => Promise<void> | void;
+  mediaList?: MediaItem[];
+  onSaveMedia?: (updatedList: MediaItem[]) => Promise<void> | void;
 }
 
 export const AdminProductsEditor: React.FC<AdminProductsEditorProps> = ({
   products,
-  onSaveProducts
+  onSaveProducts,
+  mediaList = DEFAULT_MEDIA_LIBRARY,
+  onSaveMedia
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState("");
+  const [activeSlideForPicker, setActiveSlideForPicker] = useState<number | null>(null);
 
   const handleStartAdd = () => {
     const defaultImg = FACTORY_PHOTOS_PRESETS[0]?.url || "";

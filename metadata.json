@@ -1,0 +1,8 @@
+{
+  "name": "Remix: ТБ-Ресурс — Резиновые маты для КРС",
+  "description": "Интерактивный лендинг производителя резиновых покрытий для животноводства с анимациями при скролле, калькулятором надоя и Node.js бэкендом формы обратной связи.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-body: "Inter", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-primary: #059669;
+  --color-primary-hover: #047857;
+  --color-primary-light: #ecfdf5;
+  --color-primary-fixed: #d1fae5;
+  
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container-high: #e2e8f0;
+  --color-surface-container-lowest: #ffffff;
+  
+  --color-tertiary: #10b981;
+  --color-tertiary-light: #a7f3d0;
+  
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #475569;
+  --color-outline: #94a3b8;
+  --color-outline-variant: #e2e8f0;
+  
+  --color-brand-graphite: #0f172a;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-headline {
+  font-family: var(--font-headline);
+  letter-spacing: -0.025em;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glassmorphism & Custom Scrollbar */
+.nav-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Soft sleek shadows matching the reference */
+.shadow-organic {
+  box-shadow: 0 10px 30px -5px rgba(5, 150, 105, 0.08), 0 4px 10px -3px rgba(15, 23, 42, 0.04);
+}
+
+.shadow-organic-lg {
+  box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.15), 0 10px 20px -5px rgba(15, 23, 42, 0.06);
+}
+
+.shadow-sleek-indigo, .shadow-sleek-emerald {
+  box-shadow: 0 10px 25px -3px rgba(5, 150, 105, 0.25), 0 4px 6px -2px rgba(5, 150, 105, 0.1);
+}
+

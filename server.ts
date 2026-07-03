@@ -146,6 +146,9 @@ async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
+  // Directly serve dynamic images from src/assets/images for user uploaded assets
+  app.use("/assets/images", express.static(path.join(process.cwd(), "src/assets/images")));
+
   // Block search engine indexing and crawlers for admin panel and API routes
   app.use((req, res, next) => {
     if (req.path.startsWith("/admin") || req.path.startsWith("/api/")) {

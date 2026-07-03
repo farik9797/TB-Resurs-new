@@ -3,6 +3,7 @@ import { ShieldCheck, Mail, MapPin, Clock, Phone } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../data';
 import { MessengerButtons } from './MessengerButtons';
+import { TbResursLogoSvg } from './TbResursLogoSvg';
 
 interface FooterProps {
   settings?: SiteSettings;
@@ -31,15 +32,8 @@ export const Footer: React.FC<FooterProps> = ({ settings = DEFAULT_SETTINGS }) =
       <div className="max-w-7xl mx-auto px-4 md:px-8 grid md:grid-cols-12 gap-10">
         
         <div className="md:col-span-5">
-          <div className="flex items-center gap-3 mb-4">
-            {settings.logoUrl ? (
-              <img src={settings.logoUrl} alt={settings.logoText || "ТБ-Ресурс"} className="h-10 w-auto object-contain max-w-[140px] bg-white/10 p-1 rounded-lg" />
-            ) : (
-              <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shadow-emerald-500/25">
-                {(settings.logoText || "ТБ").slice(0, 2)}
-              </div>
-            )}
-            <span className="font-headline text-2xl font-bold tracking-tight">{settings.logoText || "ТБ-Ресурс"}</span>
+          <div className="flex items-center mb-5">
+            <img src={settings.logoUrl || "/assets/images/logo.png"} alt={settings.logoText || "ТБ-Ресурс"} className="h-11 w-auto object-contain max-w-[220px] bg-white/10 p-1.5 rounded-xl" />
           </div>
           <p className="text-xs text-slate-400 mb-6 max-w-sm leading-relaxed font-normal">
             {settings.footerDescription || "Специализированный завод резинотехнических изделий для сельского хозяйства. Прямые поставки вулканизированных матов для КРС из Республики Татарстан по всей России и странам СНГ."}

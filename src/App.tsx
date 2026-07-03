@@ -41,6 +41,9 @@ export default function App() {
       const saved = localStorage.getItem("tb_resurs_settings");
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (!parsed.logoUrl) {
+          parsed.logoUrl = "/assets/images/logo.png";
+        }
         if (parsed.heroImageUrl?.includes("1516467508483")) {
           parsed.heroImageUrl = DEFAULT_SETTINGS.heroImageUrl;
         }
@@ -56,12 +59,29 @@ export default function App() {
     return DEFAULT_SETTINGS;
   });
 
+  const syncProductSlides = (prods: Product[]): Product[] => {
+    if (!Array.isArray(prods) || prods.length === 0) return PRODUCTS_DATA;
+    return prods.map(p => {
+      if (p.id === "stalls-mat" || p.id === "corridor-mat") {
+        const defProd = PRODUCTS_DATA.find(dp => dp.id === p.id);
+        if (defProd) {
+          return {
+            ...p,
+            imageUrl: defProd.imageUrl,
+            images: defProd.images
+          };
+        }
+      }
+      return p;
+    });
+  };
+
   const [products, setProducts] = useState<Product[]>(() => {
     try {
       const saved = localStorage.getItem("tb_resurs_products_v2");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) return syncProductSlides(parsed);
       }
     } catch (e) {}
     return PRODUCTS_DATA;
@@ -119,6 +139,9 @@ export default function App() {
             ...(localSettings || {}),
             ...(idbSettings || {})
           };
+          if (!combined.logoUrl) {
+            combined.logoUrl = "/assets/images/logo.png";
+          }
           setSettings(combined);
           localStorage.setItem("tb_resurs_settings", JSON.stringify(combined));
         }
@@ -132,7 +155,7 @@ export default function App() {
     try {
       const idbProducts = await loadFromIDB<Product[]>("tb_resurs_products_v2");
       if (idbProducts && Array.isArray(idbProducts) && idbProducts.length > 0) {
-        setProducts(idbProducts);
+        setProducts(syncProductSlides(idbProducts));
       }
     } catch (e) {}
 
@@ -148,10 +171,11 @@ export default function App() {
             const idbProducts = await loadFromIDB<Product[]>("tb_resurs_products_v2");
             
             // Prefer IDB / localStorage if they exist
-            const bestProducts = (idbProducts && idbProducts.length > 0) 
+            const rawBest = (idbProducts && idbProducts.length > 0) 
               ? idbProducts 
               : ((localProducts && localProducts.length > 0) ? localProducts : json.products);
 
+            const bestProducts = syncProductSlides(rawBest);
             setProducts(bestProducts);
             localStorage.setItem("tb_resurs_products_v2", JSON.stringify(bestProducts));
           }

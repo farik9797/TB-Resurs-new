@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS } from '../data';
 import { Phone, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessengerButtons } from './MessengerButtons';
+import { TbResursLogoSvg } from './TbResursLogoSvg';
 
 interface TopNavbarProps {
   onOpenLeadsDrawer?: () => void;
@@ -59,23 +60,13 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="flex items-center gap-3 cursor-pointer"
+            className="flex items-center cursor-pointer group"
           >
-            {settings.logoUrl ? (
-              <img src={settings.logoUrl} alt={settings.logoText || "ТБ-Ресурс"} className="h-10 w-auto object-contain max-w-[120px]" />
-            ) : (
-              <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shadow-emerald-500/20">
-                {(settings.logoText || "ТБ").slice(0, 2)}
-              </div>
-            )}
-            <div>
-              <span className="font-headline font-bold text-xl md:text-2xl text-emerald-600 block leading-none">
-                {settings.logoText || "ТБ-Ресурс"}
-              </span>
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
-                {settings.logoSubtitle || "Завод в Татарстане"}
-              </span>
-            </div>
+            <img 
+              src={settings.logoUrl || "/assets/images/logo.png"} 
+              alt={settings.logoText || "ТБ-Ресурс"} 
+              className="h-11 md:h-12 w-auto object-contain max-w-[350px] transition-transform duration-300 group-hover:scale-105" 
+            />
           </a>
 
           <nav className="hidden xl:flex gap-5 items-center text-sm font-medium ml-4">

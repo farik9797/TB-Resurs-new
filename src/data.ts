@@ -9,6 +9,16 @@ import puzzleImg3 from "./assets/images/dovetail_joint_macro_1783083187574.jpg";
 import puzzleImg4 from "./assets/images/stacked_puzzle_mats_warehouse_1783083212479.jpg";
 import puzzleImg5 from "./assets/images/mat_studded_bottom_top_view_1783083228541.jpg";
 
+const imageGlob = import.meta.glob<{ default: string }>('./assets/images/*.{jpg,jpeg,png,webp}', { eager: true });
+
+export function getAssetImg(filename: string, fallback?: string): string {
+  const path = `./assets/images/${filename}`;
+  if (imageGlob[path] && imageGlob[path].default) {
+    return imageGlob[path].default;
+  }
+  return `/src/assets/images/${filename}`;
+}
+
 export const FACTORY_PHOTOS_PRESETS = [
   { label: "Стойломесто (коровы лежа в боксе)", url: stallImg1 },
   { label: "Протектор с шипами (нижний слой)", url: stallImg2 },
@@ -18,7 +28,8 @@ export const FACTORY_PHOTOS_PRESETS = [
   { label: "Квадратный паз-шип мат", url: puzzleImg2 },
   { label: "Замок «Ласточкин хвост» крупно", url: puzzleImg3 },
   { label: "Склад поддонов с готовой продукцией", url: puzzleImg4 },
-  { label: "Мат с шипами и шагренью в разрезе", url: puzzleImg5 }
+  { label: "Мат с шипами и шагренью в разрезе", url: puzzleImg5 },
+  { label: "Выставочный стенд и макет ТБ-Ресурс", url: "https://lh3.googleusercontent.com/aida-public/AB6AXuD9dJoUoVd6sqJmXq7Cnu7mMw2Ri32kQrQWAhB6mZv0-5Kw8sd91M4QGQWZLU_dtk8hfTNe65VCJgQnOJp3tpxJJ_mSmrumR4iHFS-D6vxI3-RUcZUGSq7CueGkGBD1TVx2_l46pptRMZQs1cX1OBgVHiysbggGeaeItPI36CK3d-L9CARqBcoixExfnLA8IOaAx4ZXUJqYXOhYtPpOoPADNmnElfltq1r7P8hQSIti64YUHIZCcEcpgg" }
 ];
 
 export const DEFAULT_MEDIA_LIBRARY: MediaItem[] = [
@@ -30,7 +41,8 @@ export const DEFAULT_MEDIA_LIBRARY: MediaItem[] = [
   { id: "media-6", name: "Квадратный паз-шип мат.jpg", url: puzzleImg2, size: "310 KB", uploadedAt: "2026-06-01" },
   { id: "media-7", name: "Замок «Ласточкин хвост» крупно.jpg", url: puzzleImg3, size: "260 KB", uploadedAt: "2026-06-01" },
   { id: "media-8", name: "Склад поддонов с готовой продукцией.jpg", url: puzzleImg4, size: "440 KB", uploadedAt: "2026-06-01" },
-  { id: "media-9", name: "Мат с шипами и шагренью в разрезе.jpg", url: puzzleImg5, size: "275 KB", uploadedAt: "2026-06-01" }
+  { id: "media-9", name: "Мат с шипами и шагренью в разрезе.jpg", url: puzzleImg5, size: "275 KB", uploadedAt: "2026-06-01" },
+  { id: "media-10", name: "Выставочный стенд ТБ-Ресурс.jpg", url: "https://lh3.googleusercontent.com/aida-public/AB6AXuD9dJoUoVd6sqJmXq7Cnu7mMw2Ri32kQrQWAhB6mZv0-5Kw8sd91M4QGQWZLU_dtk8hfTNe65VCJgQnOJp3tpxJJ_mSmrumR4iHFS-D6vxI3-RUcZUGSq7CueGkGBD1TVx2_l46pptRMZQs1cX1OBgVHiysbggGeaeItPI36CK3d-L9CARqBcoixExfnLA8IOaAx4ZXUJqYXOhYtPpOoPADNmnElfltq1r7P8hQSIti64YUHIZCcEcpgg", size: "380 KB", uploadedAt: "2026-07-03" }
 ];
 
 
@@ -41,7 +53,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   address: "Республика Татарстан, г. Казань / Кукморский р-н, ул. Заводская, 12",
   workHours: "Пн-Пт с 08:00 до 17:00 (МСК)",
 
-  logoUrl: "",
+  logoUrl: "/assets/images/logo.png",
   logoText: "ТБ-Ресурс",
   logoSubtitle: "Завод в Татарстане",
 
@@ -80,11 +92,15 @@ export const PRODUCTS_DATA: Product[] = [
     jointType: "Прямой край",
     warranty: "5 лет официальной заводской гарантии",
     description: "Специализированные резиновые плиты толщиной 30 мм для оборудования стойломест и боксов отдыха коров. Изготовлены из высококачественной некордированной резины с прямым краем. Инновационная демпферная система на нижней стороне мягко амортизирует вес животного при ложении и вставании, предотвращая бурситы и травмы суставов, а надежные крепежные элементы в комплекте гарантируют стабильную фиксацию к бетонному основанию.",
-    imageUrl: stallImg1,
+    imageUrl: getAssetImg("pr-1-1.jpg"),
     images: [
-      stallImg1,
-      stallImg2,
-      stallImg3
+      getAssetImg("pr-1-1.jpg"),
+      getAssetImg("pr-1-2.jpg"),
+      getAssetImg("pr-1-3.jpg"),
+      getAssetImg("pr-1-4.jpg"),
+      getAssetImg("pr-1-5.jpg"),
+      getAssetImg("pr-1-6.jpg"),
+      getAssetImg("pr-1-7.jpg")
     ],
     features: [
       "Доступные габариты: 1830×1200×30 мм, 1900×1200×30 мм, 2000×1200×30 мм",
@@ -111,13 +127,15 @@ export const PRODUCTS_DATA: Product[] = [
     jointType: "Пазловые соединения",
     warranty: "5 лет при интенсивном трафике и работе скреперов",
     description: "Высокопрочные некордированные резиновые плиты габаритами 2040×1280×24 мм, спроектированные для зон активного перемещения стада, галерей, доильно-молочных блоков (ДМБ) и навозных проходов. Специальные шипы обеспечивают непрерывный отток влаги и уверенное сцепление копыта с поверхностью даже в сырой среде, а герметичные пазловые соединения создают монолитное покрытие, полностью совместимое с дельта-скреперами.",
-    imageUrl: puzzleImg1,
+    imageUrl: getAssetImg("pr-2-1.jpg"),
     images: [
-      puzzleImg1,
-      puzzleImg2,
-      puzzleImg3,
-      puzzleImg5,
-      puzzleImg4
+      getAssetImg("pr-2-1.jpg"),
+      getAssetImg("pr-2-2.jpg"),
+      getAssetImg("pr-2-3.jpg"),
+      getAssetImg("pr-2-4.jpg"),
+      getAssetImg("pr-2-5.jpg"),
+      getAssetImg("pr-2-6.jpg"),
+      getAssetImg("pr-2-7.jpg")
     ],
     features: [
       "Точный габаритный размер плиты: 2040×1280×24 мм",

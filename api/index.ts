@@ -1,7 +1,52 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Block search engine indexing and crawlers for admin panel and API routes
+app.use((req, res, next) => {
+  if (req.path.startsWith("/admin") || req.path.startsWith("/api/")) {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  }
+  next();
+});
+
+// Explicit robots.txt route
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send("User-agent: *\nDisallow: /admin-panel\nDisallow: /admin\nDisallow: /api/\n");
+});
+
+const getStoragePaths = (filename: string) => {
+  return [
+    path.join("/tmp", filename),
+    path.join(process.cwd(), filename)
+  ];
+};
+
+const loadJSON = (filename: string) => {
+  for (const filePath of getStoragePaths(filename)) {
+    try {
+      if (fs.existsSync(filePath)) {
+        const data = fs.readFileSync(filePath, "utf-8");
+        const parsed = JSON.parse(data);
+        if (parsed) return parsed;
+      }
+    } catch (e) {}
+  }
+  return null;
+};
+
+const saveJSON = (filename: string, data: any) => {
+  for (const filePath of getStoragePaths(filename)) {
+    try {
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+    } catch (e) {}
+  }
+};
 
 export interface Lead {
   id: string;
@@ -51,10 +96,13 @@ let leads: Lead[] = [
   }
 ];
 
+let currentProducts: any[] | null = null;
+let currentMedia: any[] | null = null;
+
 let currentSettings = {
-  phone: "+7 (800) 555-35-35",
+  phone: "+7 915 638-72-59",
   emailForLeads: "info@tb-resurs.ru",
-  telegramForLeads: "@tbresurs_bot",
+  telegramForLeads: "https://t.me/+79156387259",
   address: "Республика Татарстан, г. Казань / Кукморский р-н, ул. Заводская, 12",
   workHours: "Пн-Пт с 08:00 до 17:00 (МСК)",
   logoUrl: "",
@@ -94,6 +142,29 @@ let adminUsers = [
   }
 ];
 
+// Load saved state from disk or /tmp on cold boot
+try {
+  const loadedSettings = loadJSON("settings.json");
+  if (loadedSettings && typeof loadedSettings === "object") {
+    currentSettings = { ...currentSettings, ...loadedSettings };
+    if (currentSettings.phone?.includes("800") || currentSettings.phone?.includes("555")) {
+      currentSettings.phone = "+7 915 638-72-59";
+    }
+  }
+  const loadedUsers = loadJSON("users.json");
+  if (Array.isArray(loadedUsers) && loadedUsers.length > 0) {
+    adminUsers = loadedUsers;
+  }
+  const loadedProducts = loadJSON("products.json");
+  if (Array.isArray(loadedProducts) && loadedProducts.length > 0) {
+    currentProducts = loadedProducts;
+  }
+  const loadedMedia = loadJSON("media.json");
+  if (Array.isArray(loadedMedia) && loadedMedia.length > 0) {
+    currentMedia = loadedMedia;
+  }
+} catch (e) {}
+
 const apiRouter = express.Router();
 
 apiRouter.post("/auth/login", (req, res) => {
@@ -128,6 +199,7 @@ apiRouter.post("/users", (req, res) => {
     createdAt: new Date().toISOString()
   };
   adminUsers.push(newUser);
+  saveJSON("users.json", adminUsers);
   const { password: _, ...safeUser } = newUser;
   res.json({ success: true, user: safeUser, users: adminUsers.map(({ password, ...u }) => u) });
 });
@@ -138,6 +210,7 @@ apiRouter.delete("/users/:id", (req, res) => {
     return res.status(400).json({ success: false, message: "Нельзя удалить единственного администратора" });
   }
   adminUsers = adminUsers.filter(u => u.id !== id);
+  saveJSON("users.json", adminUsers);
   res.json({ success: true, users: adminUsers.map(({ password, ...u }) => u) });
 });
 
@@ -147,7 +220,36 @@ apiRouter.get("/settings", (req, res) => {
 
 apiRouter.post("/settings", (req, res) => {
   currentSettings = { ...currentSettings, ...req.body };
+  saveJSON("settings.json", currentSettings);
   res.json({ success: true, message: "Настройки успешно сохранены", settings: currentSettings });
+});
+
+apiRouter.get("/products", (req, res) => {
+  res.json({ success: true, products: currentProducts });
+});
+
+apiRouter.post("/products", (req, res) => {
+  const { products } = req.body;
+  if (!Array.isArray(products)) {
+    return res.status(400).json({ success: false, message: "Неверный формат каталога товаров" });
+  }
+  currentProducts = products;
+  saveJSON("products.json", currentProducts);
+  res.json({ success: true, message: "Каталог товаров успешно сохранен", products: currentProducts });
+});
+
+apiRouter.get("/media", (req, res) => {
+  res.json({ success: true, media: currentMedia });
+});
+
+apiRouter.post("/media", (req, res) => {
+  const { media } = req.body;
+  if (!Array.isArray(media)) {
+    return res.status(400).json({ success: false, message: "Неверный формат медиатеки" });
+  }
+  currentMedia = media;
+  saveJSON("media.json", currentMedia);
+  res.json({ success: true, message: "Медиатека успешно обновлена", media: currentMedia });
 });
 
 apiRouter.get("/health", (req, res) => {

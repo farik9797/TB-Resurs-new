@@ -6,7 +6,7 @@ import { AdminProductsEditor } from './AdminProductsEditor';
 import { AdminMediaLibrary } from './AdminMediaLibrary';
 import { MediaGallery, type MediaGalleryProps } from './MediaGallery';
 export { MediaGallery, type MediaGalleryProps };
-import { saveMediaToIDB, loadMediaFromIDB } from '../lib/idbStorage';
+import { saveMediaToIDB, loadMediaFromIDB, saveToIDB, loadFromIDB } from '../lib/idbStorage';
 import { 
   Lock, User, Key, LogIn, LogOut, ArrowLeft, RefreshCw, Building2, 
   FileSpreadsheet, Phone, Mail, MapPin, Clock, Send, Image, FileText, 
@@ -209,6 +209,15 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   };
 
   useEffect(() => {
+    document.title = "Панель управления | ТБ-Ресурс (Закрытый доступ)";
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.setAttribute('name', 'robots');
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute('content', 'noindex, nofollow, noarchive, nosnippet');
+
     loadMediaFromIDB().then(idb => {
       if (idb && idb.length > mediaList.length) {
         setMediaList(idb);
@@ -254,6 +263,7 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
 
     try {
       localStorage.setItem("tb_resurs_settings", JSON.stringify(formData));
+      try { await saveToIDB("tb_resurs_settings", formData); } catch (e) {}
       try {
         await fetch("/api/settings", {
           method: "POST",
@@ -274,6 +284,7 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
     setProductsList(updatedList);
     try {
       localStorage.setItem("tb_resurs_products_v2", JSON.stringify(updatedList));
+      try { await saveToIDB("tb_resurs_products_v2", updatedList); } catch (e) {}
       try {
         await fetch("/api/products", {
           method: "POST",

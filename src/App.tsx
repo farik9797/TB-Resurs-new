@@ -17,6 +17,7 @@ import { Footer } from './components/Footer';
 import { FloatingContactHub } from './components/FloatingContactHub';
 import { SiteSettings, Product } from './types';
 import { DEFAULT_SETTINGS, PRODUCTS_DATA } from './data';
+import { loadFromIDB } from './lib/idbStorage';
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.pathname);
@@ -87,6 +88,13 @@ export default function App() {
 
   const fetchSettings = async () => {
     try {
+      const idbSettings = await loadFromIDB<SiteSettings>("tb_resurs_settings");
+      if (idbSettings && idbSettings.logoUrl) {
+        setSettings(idbSettings);
+      }
+    } catch (e) {}
+
+    try {
       const res = await fetch("/api/settings");
       if (res.ok) {
         const json = await res.json();
@@ -101,26 +109,51 @@ export default function App() {
               s.telegramForLeads = DEFAULT_SETTINGS.telegramForLeads;
             }
           }
-          setSettings(s);
-          localStorage.setItem("tb_resurs_settings", JSON.stringify(s));
+          // Check if local storage or IndexedDB has custom saved changes (like customized logoUrl or phone)
+          const localStr = localStorage.getItem("tb_resurs_settings");
+          const localSettings = localStr ? JSON.parse(localStr) : null;
+          const idbSettings = await loadFromIDB<SiteSettings>("tb_resurs_settings");
+          
+          const combined = {
+            ...s,
+            ...(localSettings || {}),
+            ...(idbSettings || {})
+          };
+          setSettings(combined);
+          localStorage.setItem("tb_resurs_settings", JSON.stringify(combined));
         }
       }
     } catch (e) {
-      // Backend offline or static host, rely on localStorage
+      // Backend offline or static host, rely on localStorage / IDB
     }
   };
 
   const fetchProducts = async () => {
     try {
+      const idbProducts = await loadFromIDB<Product[]>("tb_resurs_products_v2");
+      if (idbProducts && Array.isArray(idbProducts) && idbProducts.length > 0) {
+        setProducts(idbProducts);
+      }
+    } catch (e) {}
+
+    try {
       const res = await fetch("/api/products");
       if (res.ok) {
         const json = await res.json();
         if (json.success && Array.isArray(json.products) && json.products.length > 0) {
-          // Verify if it's not the old outdated data before setting
           const isOldFormat = json.products.some((p: any) => p.title?.includes("Маты для стойломест"));
           if (!isOldFormat) {
-            setProducts(json.products);
-            localStorage.setItem("tb_resurs_products_v2", JSON.stringify(json.products));
+            const localStr = localStorage.getItem("tb_resurs_products_v2");
+            const localProducts = localStr ? JSON.parse(localStr) : null;
+            const idbProducts = await loadFromIDB<Product[]>("tb_resurs_products_v2");
+            
+            // Prefer IDB / localStorage if they exist
+            const bestProducts = (idbProducts && idbProducts.length > 0) 
+              ? idbProducts 
+              : ((localProducts && localProducts.length > 0) ? localProducts : json.products);
+
+            setProducts(bestProducts);
+            localStorage.setItem("tb_resurs_products_v2", JSON.stringify(bestProducts));
           }
         }
       }
@@ -132,6 +165,36 @@ export default function App() {
     fetchSettings();
     fetchProducts();
   }, []);
+
+  // Hide admin panel from search engine robots and indexing
+  useEffect(() => {
+    const isAdmin = currentRoute === '/admin-panel' || currentRoute.startsWith('/admin');
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    let metaGoogle = document.querySelector('meta[name="googlebot"]');
+
+    if (isAdmin) {
+      if (!metaRobots) {
+        metaRobots = document.createElement('meta');
+        metaRobots.setAttribute('name', 'robots');
+        document.head.appendChild(metaRobots);
+      }
+      metaRobots.setAttribute('content', 'noindex, nofollow, noarchive, nosnippet');
+
+      if (!metaGoogle) {
+        metaGoogle = document.createElement('meta');
+        metaGoogle.setAttribute('name', 'googlebot');
+        document.head.appendChild(metaGoogle);
+      }
+      metaGoogle.setAttribute('content', 'noindex, nofollow, noarchive, nosnippet');
+    } else {
+      if (metaRobots) {
+        metaRobots.setAttribute('content', 'index, follow');
+      }
+      if (metaGoogle) {
+        metaGoogle.remove();
+      }
+    }
+  }, [currentRoute]);
 
   // Dynamically inject SEO codes and update document title whenever settings change
   useEffect(() => {

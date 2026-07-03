@@ -146,6 +146,20 @@ async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
+  // Block search engine indexing and crawlers for admin panel and API routes
+  app.use((req, res, next) => {
+    if (req.path.startsWith("/admin") || req.path.startsWith("/api/")) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+    }
+    next();
+  });
+
+  // Explicit robots.txt route
+  app.get("/robots.txt", (req, res) => {
+    res.type("text/plain");
+    res.send("User-agent: *\nDisallow: /admin-panel\nDisallow: /admin\nDisallow: /api/\n");
+  });
+
   // Auth & Admin Users API
   app.post("/api/auth/login", (req, res) => {
     const { login, password } = req.body;

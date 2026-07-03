@@ -43,7 +43,7 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
         const img = new Image();
         img.src = resultUrl;
         img.onload = () => {
-          const maxDim = 1800; // Optimal high quality resolution for factory products
+          const maxDim = 1000; // Optimal resolution for fast loading and storage efficiency
           let width = img.width;
           let height = img.height;
 
@@ -63,8 +63,8 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
           const ctx = canvas.getContext("2d");
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            // Convert to JPEG quality 0.85
-            const compressedUrl = canvas.toDataURL("image/jpeg", 0.85);
+            // Convert to JPEG quality 0.78
+            const compressedUrl = canvas.toDataURL("image/jpeg", 0.78);
             const approxSizeKb = Math.round((compressedUrl.length * 0.75) / 1024);
             resolve({
               id: `media-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,

@@ -4,6 +4,7 @@ import { LeadItem, SiteSettings, AdminUser, Product, MediaItem } from '../types'
 import { DEFAULT_SETTINGS, PRODUCTS_DATA, DEFAULT_MEDIA_LIBRARY } from '../data';
 import { AdminProductsEditor } from './AdminProductsEditor';
 import { AdminMediaLibrary } from './AdminMediaLibrary';
+import { saveMediaToIDB, loadMediaFromIDB } from '../lib/idbStorage';
 import { 
   Lock, User, Key, LogIn, LogOut, ArrowLeft, RefreshCw, Building2, 
   FileSpreadsheet, Phone, Mail, MapPin, Clock, Send, Image, FileText, 
@@ -157,11 +158,14 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
         const usersJson = await usersRes.json();
         if (usersJson.success) setUsersList(usersJson.users);
       }
+      const idbMedia = await loadMediaFromIDB();
       if (mediaRes.ok) {
         const mediaJson = await mediaRes.json();
-        if (mediaJson.success && Array.isArray(mediaJson.media) && mediaJson.media.length > 0) {
-          setMediaList(mediaJson.media);
-        }
+        const serverList = (mediaJson.success && Array.isArray(mediaJson.media)) ? mediaJson.media : [];
+        const combined = idbMedia && idbMedia.length >= serverList.length ? idbMedia : (serverList.length > 0 ? serverList : (idbMedia || mediaList));
+        setMediaList(combined);
+      } else if (idbMedia && idbMedia.length > 0) {
+        setMediaList(idbMedia);
       }
     } catch (e) {
       // Local fallback for users
@@ -176,6 +180,9 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
           }
         ]);
       }
+      loadMediaFromIDB().then(idb => {
+        if (idb && idb.length > 0) setMediaList(idb);
+      });
     } finally {
       setLoadingLeads(false);
     }
@@ -187,6 +194,9 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
       localStorage.setItem("tb_resurs_media", JSON.stringify(updatedList));
     } catch (e) {}
     try {
+      await saveMediaToIDB(updatedList);
+    } catch (e) {}
+    try {
       await fetch("/api/media", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -196,6 +206,11 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   };
 
   useEffect(() => {
+    loadMediaFromIDB().then(idb => {
+      if (idb && idb.length > mediaList.length) {
+        setMediaList(idb);
+      }
+    });
     if (currentUser) {
       fetchData();
     }

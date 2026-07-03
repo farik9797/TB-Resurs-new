@@ -377,7 +377,7 @@ export const AdminProductsEditor: React.FC<AdminProductsEditorProps> = ({
                     )}
                   </div>
 
-                  <div className="flex-1 w-full">
+                  <div className="flex-1 w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <input
                       type="text"
                       value={imgUrl}
@@ -385,6 +385,14 @@ export const AdminProductsEditor: React.FC<AdminProductsEditorProps> = ({
                       placeholder="Вставьте ссылку на фото (https://...) или выберите из галереи ниже"
                       className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs sm:text-sm focus:border-emerald-500 focus:outline-none font-mono"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setActiveSlideForPicker(imgIdx)}
+                      className="px-3.5 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 hover:text-white font-bold text-xs rounded-xl border border-emerald-500/30 flex items-center justify-center gap-1.5 whitespace-nowrap transition-colors cursor-pointer"
+                    >
+                      <HardDrive className="w-3.5 h-3.5" />
+                      <span>Из Медиатеки</span>
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-2 self-end md:self-center">
@@ -704,6 +712,33 @@ export const AdminProductsEditor: React.FC<AdminProductsEditorProps> = ({
           );
         })}
       </div>
+
+      {/* Media Picker Modal */}
+      <AnimatePresence>
+        {activeSlideForPicker !== null && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            >
+              <AdminMediaLibrary
+                mediaList={mediaList}
+                onSaveMedia={onSaveMedia || (() => {})}
+                isModalPicker={true}
+                onSelectMedia={(url) => {
+                  if (activeSlideForPicker !== null) {
+                    handleSlideChangeUrl(activeSlideForPicker, url);
+                  }
+                  setActiveSlideForPicker(null);
+                }}
+                onCloseModal={() => setActiveSlideForPicker(null)}
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

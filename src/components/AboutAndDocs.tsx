@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DOCUMENTS_DATA } from '../data';
-import { DocumentItem } from '../types';
+import { DocumentItem, SiteSettings } from '../types';
 import { MapPin, Award, ShieldCheck, FlaskConical, HardHat, FileText, X, CheckCircle2, ArrowRight, Download, Server, CloudUpload, Terminal, Check } from 'lucide-react';
 
-export const AboutAndDocs: React.FC = () => {
+interface AboutAndDocsProps {
+  settings?: SiteSettings;
+}
+
+export const AboutAndDocs: React.FC<AboutAndDocsProps> = ({ settings }) => {
   const [activeDoc, setActiveDoc] = useState<DocumentItem | null>(null);
   const [downloading, setDownloading] = useState<boolean>(false);
   const [showHostingModal, setShowHostingModal] = useState<boolean>(false);
@@ -46,11 +50,12 @@ export const AboutAndDocs: React.FC = () => {
             <span>Республика Татарстан, Кукморский р-н</span>
           </span>
           <h2 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-            Производитель — <br />
-            <span className="text-emerald-600">ООО «ТБ-Ресурс»</span>
+            {settings?.aboutTitle ? settings.aboutTitle : (
+              <>Производитель — <br /><span className="text-emerald-600">ООО «ТБ-Ресурс»</span></>
+            )}
           </h2>
           <p className="text-slate-600 text-base sm:text-lg mb-6 leading-relaxed font-normal">
-            Наш специализированный завод расположен в Кукморском районе Республики Татарстан. Мы занимаемся исключительно разработкой и производством высокоплотных изделий из резины для агропромышленного комплекса.
+            {settings?.aboutText || "Наш специализированный завод расположен в Кукморском районе Республики Татарстан. Мы занимаемся исключительно разработкой и производством высокоплотных изделий из резины для агропромышленного комплекса."}
           </p>
           <p className="text-slate-600 text-base sm:text-lg mb-8 leading-relaxed font-normal">
             Использование автоматических вулканизационных прессов и первичного сырья позволяет нам достигать плотности и износостойкости, превосходящей многие европейские аналоги при стоимости на 30-40% ниже.

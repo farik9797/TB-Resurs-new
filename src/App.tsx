@@ -12,6 +12,7 @@ import { WorkProcess } from './components/WorkProcess';
 import { ContactForm } from './components/ContactForm';
 import { AdminLeadsDrawer } from './components/AdminLeadsDrawer';
 import { AdminPanelPage } from './components/AdminPanelPage';
+import { LeadPopupModal } from './components/LeadPopupModal';
 import { Footer } from './components/Footer';
 import { SiteSettings } from './types';
 import { DEFAULT_SETTINGS } from './data';
@@ -20,6 +21,8 @@ export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.pathname);
   const [leadsCount, setLeadsCount] = useState<number>(1);
   const [isLeadsDrawerOpen, setIsLeadsDrawerOpen] = useState<boolean>(false);
+  const [isLeadPopupOpen, setIsLeadPopupOpen] = useState<boolean>(false);
+  const [popupProduct, setPopupProduct] = useState<string>("Консультация и подбор покрытия");
 
   useEffect(() => {
     const handlePopState = () => {
@@ -157,20 +160,29 @@ export default function App() {
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      const headerOffset = 85;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
   };
 
   const handleSelectZoneForForm = (zoneName: string) => {
     setFormProduct(zoneName);
     setFormComment(`Интересует покрытие для зоны: ${zoneName}. Прошу рассчитать КП и параметры монтажа.`);
-    scrollToSection("contacts");
+    setPopupProduct(zoneName);
+    setIsLeadPopupOpen(true);
   };
 
   const handleSelectProductForQuote = (productName: string) => {
     setFormProduct(productName);
     setFormComment(`Запрос цены и наличия на складскую позицию: ${productName}.`);
-    scrollToSection("contacts");
+    setPopupProduct(productName);
+    setIsLeadPopupOpen(true);
   };
 
   if (currentRoute === '/admin-panel' || currentRoute.startsWith('/admin')) {
@@ -190,13 +202,20 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
       <TopNavbar
         onOpenLeadsDrawer={() => setIsLeadsDrawerOpen(true)}
+        onOpenLeadPopup={() => {
+          setPopupProduct("Консультация и расчет цены");
+          setIsLeadPopupOpen(true);
+        }}
         settings={settings}
       />
 
       <main>
         <HeroSection
           onScrollToProducts={() => scrollToSection("products")}
-          onScrollToForm={() => scrollToSection("contacts")}
+          onScrollToForm={() => {
+            setPopupProduct("Консультация по матам ГОСТ Р");
+            setIsLeadPopupOpen(true);
+          }}
           settings={settings}
         />
 
@@ -204,6 +223,7 @@ export default function App() {
 
         <InteractiveFarmMap
           onSelectZoneForForm={handleSelectZoneForForm}
+          settings={settings}
         />
 
         <StatsCounter />
@@ -215,9 +235,9 @@ export default function App() {
 
         <BentoFeatures />
 
-        <AboutAndDocs />
+        <AboutAndDocs settings={settings} />
 
-        <FAQSection />
+        <FAQSection settings={settings} />
 
         <WorkProcess />
 
@@ -231,6 +251,29 @@ export default function App() {
       </main>
 
       <Footer settings={settings} />
+
+      {/* Floating Action Button for lead generation */}
+      <button
+        onClick={() => {
+          setPopupProduct("Быстрый расчет с сайта");
+          setIsLeadPopupOpen(true);
+        }}
+        className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-3.5 rounded-full shadow-2xl shadow-emerald-600/40 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 border-2 border-white/20 cursor-pointer"
+        title="Быстрый расчет цены"
+      >
+        <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping" />
+        <span className="text-sm">Оставить заявку</span>
+      </button>
+
+      <LeadPopupModal
+        isOpen={isLeadPopupOpen}
+        onClose={() => setIsLeadPopupOpen(false)}
+        onLeadSubmitted={() => {
+          fetchLeadsCount();
+        }}
+        initialProduct={popupProduct}
+        settings={settings}
+      />
 
       <AdminLeadsDrawer
         isOpen={isLeadsDrawerOpen}

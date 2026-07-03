@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FAQ_DATA } from '../data';
-import { FaqItem } from '../types';
+import { FaqItem, SiteSettings } from '../types';
 import { HelpCircle, ChevronDown, Wrench, ShieldCheck, Sparkles, MessageCircleQuestion } from 'lucide-react';
 
-export const FAQSection: React.FC = () => {
+interface FAQSectionProps {
+  settings?: SiteSettings;
+}
+
+export const FAQSection: React.FC<FAQSectionProps> = ({ settings }) => {
   const [openId, setOpenId] = useState<string | null>(FAQ_DATA[0]?.id || null);
   const [selectedCategory, setSelectedCategory] = useState<string>("все");
 
@@ -49,10 +53,10 @@ export const FAQSection: React.FC = () => {
             <span>База знаний ТБ-Ресурс</span>
           </span>
           <h2 className="font-headline text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900">
-            Часто задаваемые вопросы
+            {settings?.faqTitle || "Часто задаваемые вопросы"}
           </h2>
           <p className="text-slate-600 text-base mt-4 leading-relaxed font-normal">
-            Ответы главного технолога завода на ключевые вопросы по укладке, уходу и сроку службы вулканизированных покрытий.
+            {settings?.faqSubtitle || "Ответы главного технолога завода на ключевые вопросы по укладке, уходу и сроку службы вулканизированных покрытий."}
           </p>
         </motion.div>
 

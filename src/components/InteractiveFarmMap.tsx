@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FARM_ZONES } from '../data';
-import { FarmZone } from '../types';
+import { FarmZone, SiteSettings } from '../types';
 import { MapPin, Bed, Footprints, Milk, Users, MoveHorizontal, HeartHandshake, ArrowRight } from 'lucide-react';
 
 interface InteractiveFarmMapProps {
   onSelectZoneForForm: (productName: string) => void;
+  settings?: SiteSettings;
 }
 
 export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
-  onSelectZoneForForm
+  onSelectZoneForForm,
+  settings
 }) => {
   const [selectedZone, setSelectedZone] = useState<FarmZone>(FARM_ZONES[0]);
 
@@ -49,10 +51,10 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
             <span>Интерактивный подбор</span>
           </span>
           <h2 className="font-headline text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900">
-            Где применяются наши покрытия
+            {settings?.mapTitle || "Где применяются наши покрытия"}
           </h2>
           <p className="text-slate-600 mt-3 max-w-2xl text-base md:text-lg">
-            Нажмите на интересующую зону животноводческого комплекса, чтобы узнать физиологический эффект и рекомендованные параметры мата.
+            {settings?.mapSubtitle || "Нажмите на интересующую зону животноводческого комплекса, чтобы узнать физиологический эффект и рекомендованные параметры мата."}
           </p>
         </div>
       </div>

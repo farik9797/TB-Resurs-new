@@ -34,7 +34,7 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Dashboard state
-  const [activeTab, setActiveTab] = useState<'leads' | 'contacts' | 'content' | 'seo' | 'users'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'contacts' | 'branding' | 'content' | 'seo' | 'users'>('leads');
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [usersList, setUsersList] = useState<AdminUser[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(false);
@@ -435,6 +435,17 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
             <span>Контакты и Почта</span>
           </button>
           <button
+            onClick={() => setActiveTab('branding')}
+            className={`flex-1 py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
+              activeTab === 'branding'
+                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Image className="w-4 h-4" />
+            <span>Логотип и Бренд</span>
+          </button>
+          <button
             onClick={() => setActiveTab('content')}
             className={`flex-1 py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'content'
@@ -672,86 +683,65 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
             </form>
           )}
 
-          {activeTab === 'content' && (
+          {activeTab === 'branding' && (
             <form onSubmit={handleSaveSettings} className="space-y-6 max-w-3xl">
-              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-slate-300 text-xs sm:text-sm">
-                🎨 Редактируйте заголовки, подзаголовки и главное фоновое изображение сайта.
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-emerald-400" />
-                  <span>Бейдж над заголовком (Hero Badge)</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.heroBadge}
-                  onChange={e => setFormData({ ...formData, heroBadge: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-emerald-400" />
-                  <span>Главный заголовок сайта (H1)</span>
-                </label>
-                <textarea
-                  rows={2}
-                  value={formData.heroTitle}
-                  onChange={e => setFormData({ ...formData, heroTitle: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-emerald-400" />
-                  <span>Подзаголовок / Описание на главном экране</span>
-                </label>
-                <textarea
-                  rows={3}
-                  value={formData.heroSubtitle}
-                  onChange={e => setFormData({ ...formData, heroSubtitle: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
+              <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs sm:text-sm">
+                🖼️ Настройте логотип и название компании. Если URL картинки логотипа указан, он отобразится в шапке и подвале сайта.
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
                   <Image className="w-4 h-4 text-emerald-400" />
-                  <span>URL главной фотографии (Hero Image URL)</span>
+                  <span>URL логотипа (PNG / SVG / WebP)</span>
                 </label>
                 <input
                   type="url"
-                  value={formData.heroImageUrl}
-                  onChange={e => setFormData({ ...formData, heroImageUrl: e.target.value })}
+                  value={formData.logoUrl || ""}
+                  onChange={e => setFormData({ ...formData, logoUrl: e.target.value })}
+                  placeholder="https://example.com/logo.png"
                   className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-mono focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 />
-                {formData.heroImageUrl && (
-                  <div className="mt-3 h-36 rounded-2xl overflow-hidden border border-slate-800 bg-slate-900">
-                    <img src={formData.heroImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                {formData.logoUrl && (
+                  <div className="mt-3 p-4 rounded-2xl border border-slate-800 bg-slate-900 flex items-center gap-4">
+                    <img src={formData.logoUrl} alt="Logo Preview" className="h-12 w-auto object-contain bg-white/10 p-1 rounded-lg" />
+                    <span className="text-xs text-slate-400">Предпросмотр логотипа</span>
                   </div>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-emerald-400" />
-                  <span>Заголовок каталога продукции</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.catalogTitle}
-                  onChange={e => setFormData({ ...formData, catalogTitle: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-emerald-400" />
+                    <span>Текст логотипа / Название</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.logoText || ""}
+                    onChange={e => setFormData({ ...formData, logoText: e.target.value })}
+                    placeholder="ТБ-Ресурс"
+                    className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-emerald-400" />
+                    <span>Подзаголовок под логотипом</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.logoSubtitle || ""}
+                    onChange={e => setFormData({ ...formData, logoSubtitle: e.target.value })}
+                    placeholder="Завод в Татарстане"
+                    className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
               </div>
 
               <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
                 {saveSuccess && (
                   <span className="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                    <Check className="w-5 h-5" /> Тексты сохранены!
+                    <Check className="w-5 h-5" /> Логотип и бренд сохранены!
                   </span>
                 )}
                 <button
@@ -760,7 +750,197 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
                   className="ml-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{isSaving ? "Сохранение..." : "Сохранить тексты"}</span>
+                  <span>{isSaving ? "Сохранение..." : "Сохранить брендинг"}</span>
+                </button>
+              </div>
+            </form>
+          )}
+
+          {activeTab === 'content' && (
+            <form onSubmit={handleSaveSettings} className="space-y-8 max-w-4xl">
+              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-slate-300 text-xs sm:text-sm">
+                🎨 Редактирование всех разделов сайта: заголовки, подзаголовки, описания и фоновые изображения.
+              </div>
+
+              {/* Секция 1: Главный экран */}
+              <div className="p-6 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-4">
+                <h4 className="font-bold text-white text-base border-b border-slate-800 pb-3 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  Главный экран (Hero Section)
+                </h4>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300">Бейдж над заголовком</label>
+                  <input
+                    type="text"
+                    value={formData.heroBadge}
+                    onChange={e => setFormData({ ...formData, heroBadge: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300">Главный заголовок (H1)</label>
+                  <textarea
+                    rows={2}
+                    value={formData.heroTitle}
+                    onChange={e => setFormData({ ...formData, heroTitle: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300">Подзаголовок / Описание</label>
+                  <textarea
+                    rows={2}
+                    value={formData.heroSubtitle}
+                    onChange={e => setFormData({ ...formData, heroSubtitle: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Текст гарантии</label>
+                    <input
+                      type="text"
+                      value={formData.guaranteeText || ""}
+                      onChange={e => setFormData({ ...formData, guaranteeText: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">URL главной фотографии</label>
+                    <input
+                      type="url"
+                      value={formData.heroImageUrl}
+                      onChange={e => setFormData({ ...formData, heroImageUrl: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-mono focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Секция 2: Каталог продукции */}
+              <div className="p-6 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-4">
+                <h4 className="font-bold text-white text-base border-b border-slate-800 pb-3 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  Каталог продукции (Products Section)
+                </h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Заголовок каталога</label>
+                    <input
+                      type="text"
+                      value={formData.catalogTitle}
+                      onChange={e => setFormData({ ...formData, catalogTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Подзаголовок каталога</label>
+                    <input
+                      type="text"
+                      value={formData.catalogSubtitle}
+                      onChange={e => setFormData({ ...formData, catalogSubtitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Секция 3: Интерактивная карта и Калькулятор */}
+              <div className="p-6 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-4">
+                <h4 className="font-bold text-white text-base border-b border-slate-800 pb-3 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  Интерактивная карта фермы и Калькулятор
+                </h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Заголовок карты фермы</label>
+                    <input
+                      type="text"
+                      value={formData.mapTitle || ""}
+                      onChange={e => setFormData({ ...formData, mapTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Подзаголовок карты фермы</label>
+                    <input
+                      type="text"
+                      value={formData.mapSubtitle || ""}
+                      onChange={e => setFormData({ ...formData, mapSubtitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Заголовок калькулятора</label>
+                    <input
+                      type="text"
+                      value={formData.calcTitle || ""}
+                      onChange={e => setFormData({ ...formData, calcTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Подзаголовок калькулятора</label>
+                    <input
+                      type="text"
+                      value={formData.calcSubtitle || ""}
+                      onChange={e => setFormData({ ...formData, calcSubtitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Секция 4: О заводе, Вопросы и Подвал */}
+              <div className="p-6 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-4">
+                <h4 className="font-bold text-white text-base border-b border-slate-800 pb-3 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  О заводе, FAQ и Подвал
+                </h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Заголовок «О заводе»</label>
+                    <input
+                      type="text"
+                      value={formData.aboutTitle || ""}
+                      onChange={e => setFormData({ ...formData, aboutTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-300">Заголовок блока FAQ</label>
+                    <input
+                      type="text"
+                      value={formData.faqTitle || ""}
+                      onChange={e => setFormData({ ...formData, faqTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-300">Описание компании в подвале</label>
+                  <textarea
+                    rows={2}
+                    value={formData.footerDescription || ""}
+                    onChange={e => setFormData({ ...formData, footerDescription: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
+                {saveSuccess && (
+                  <span className="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                    <Check className="w-5 h-5" /> Все тексты сайта успешно сохранены!
+                  </span>
+                )}
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="ml-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isSaving ? "Сохранение..." : "Сохранить изменения сайта"}</span>
                 </button>
               </div>
             </form>

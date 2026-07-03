@@ -84,6 +84,11 @@ export interface SiteSettings {
   address: string;
   workHours: string;
 
+  // Логотип и брендинг
+  logoUrl?: string;
+  logoText?: string;
+  logoSubtitle?: string;
+
   // Тексты и картинки
   heroTitle: string;
   heroSubtitle: string;
@@ -92,6 +97,17 @@ export interface SiteSettings {
   guaranteeText: string;
   catalogTitle: string;
   catalogSubtitle: string;
+
+  // Редактирование остальных разделов сайта
+  mapTitle?: string;
+  mapSubtitle?: string;
+  calcTitle?: string;
+  calcSubtitle?: string;
+  aboutTitle?: string;
+  aboutText?: string;
+  faqTitle?: string;
+  faqSubtitle?: string;
+  footerDescription?: string;
 
   // Аналитика и SEO
   yandexMetrikaId?: string;

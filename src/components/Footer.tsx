@@ -8,19 +8,40 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ settings = DEFAULT_SETTINGS }) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      const headerOffset = 85;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    } else {
+      window.location.href = `/#${targetId}`;
+    }
+  };
+
   return (
     <footer className="bg-slate-950 text-white py-14 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 md:px-8 grid md:grid-cols-12 gap-10">
         
         <div className="md:col-span-5">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shadow-emerald-500/25">
-              ТБ
-            </div>
-            <span className="font-headline text-2xl font-bold tracking-tight">ТБ-Ресурс</span>
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.logoText || "ТБ-Ресурс"} className="h-10 w-auto object-contain max-w-[140px] bg-white/10 p-1 rounded-lg" />
+            ) : (
+              <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md shadow-emerald-500/25">
+                {(settings.logoText || "ТБ").slice(0, 2)}
+              </div>
+            )}
+            <span className="font-headline text-2xl font-bold tracking-tight">{settings.logoText || "ТБ-Ресурс"}</span>
           </div>
           <p className="text-xs text-slate-400 mb-6 max-w-sm leading-relaxed font-normal">
-            Специализированный завод резинотехнических изделий для сельского хозяйства. Прямые поставки вулканизированных матов для КРС из Республики Татарстан по всей России и странам СНГ.
+            {settings.footerDescription || "Специализированный завод резинотехнических изделий для сельского хозяйства. Прямые поставки вулканизированных матов для КРС из Республики Татарстан по всей России и странам СНГ."}
           </p>
           <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
             <span className="flex items-center gap-1 text-slate-400">
@@ -56,11 +77,12 @@ export const Footer: React.FC<FooterProps> = ({ settings = DEFAULT_SETTINGS }) =
         <div className="md:col-span-3">
           <h4 className="font-headline font-bold text-lg text-white mb-4">Навигация</h4>
           <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
-            <li><a href="#applications" className="hover:text-white transition-colors">Зоны применения</a></li>
-            <li><a href="#products" className="hover:text-white transition-colors">Виды продукции</a></li>
-            <li><a href="#features" className="hover:text-white transition-colors">Преимущества и гарантия</a></li>
-            <li><a href="#about" className="hover:text-white transition-colors">ГОСТ и сертификаты</a></li>
-            <li><a href="#contacts" className="hover:text-white transition-colors">Запросить расчет КП</a></li>
+            <li><a href="#applications" onClick={(e) => handleNavClick(e, 'applications')} className="hover:text-white transition-colors cursor-pointer">Зоны применения</a></li>
+            <li><a href="#products" onClick={(e) => handleNavClick(e, 'products')} className="hover:text-white transition-colors cursor-pointer">Виды продукции</a></li>
+            <li><a href="#features" onClick={(e) => handleNavClick(e, 'features')} className="hover:text-white transition-colors cursor-pointer">Преимущества и гарантия</a></li>
+            <li><a href="#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-white transition-colors cursor-pointer">О заводе</a></li>
+            <li><a href="#faq" onClick={(e) => handleNavClick(e, 'faq')} className="hover:text-white transition-colors cursor-pointer">Частые вопросы</a></li>
+            <li><a href="#contacts" onClick={(e) => handleNavClick(e, 'contacts')} className="hover:text-white transition-colors cursor-pointer">Запросить расчет КП</a></li>
           </ul>
         </div>
 

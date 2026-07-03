@@ -11,7 +11,7 @@ export const TrustBar: React.FC = () => {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="bg-slate-100/80 py-10 border-y border-slate-200"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
         
         <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">

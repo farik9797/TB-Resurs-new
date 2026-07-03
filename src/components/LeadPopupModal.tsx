@@ -221,8 +221,8 @@ export const LeadPopupModal: React.FC<LeadPopupModalProps> = ({
                       className="w-full px-3.5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-900 focus:bg-white focus:border-emerald-600 focus:outline-none"
                     >
                       <option value="Консультация и подбор покрытия">Консультация и подбор покрытия</option>
-                      <option value="Маты для стойломест «Комфорт-Плюс»">Маты для стойломест «Комфорт-Плюс»</option>
-                      <option value="Маты для проходов, зон ДМБ и скреперных установок">Маты для проходов, зон ДМБ и скреперных установок</option>
+                      <option value="Плиты резиновые для стойломест">Плиты резиновые для стойломест</option>
+                      <option value="Плиты резиновые для галерей, ДМБ, проходов">Плиты резиновые для галерей, ДМБ, проходов</option>
                     </select>
                   </div>
 

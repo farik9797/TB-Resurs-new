@@ -53,7 +53,7 @@ export const MessengerButtons: React.FC<MessengerButtonsProps> = ({
         title="Написать в Telegram"
       >
         <Send className={iconSizes} />
-        {showLabels && <span>Telegram</span>}
+        {showLabels && <span className="hidden sm:inline">Telegram</span>}
       </a>
 
       {/* WhatsApp */}
@@ -65,7 +65,7 @@ export const MessengerButtons: React.FC<MessengerButtonsProps> = ({
         title="Написать в WhatsApp"
       >
         <MessageCircle className={iconSizes} />
-        {showLabels && <span>WhatsApp</span>}
+        {showLabels && <span className="hidden sm:inline">WhatsApp</span>}
       </a>
 
       {/* MAX */}
@@ -75,7 +75,7 @@ export const MessengerButtons: React.FC<MessengerButtonsProps> = ({
         title="Написать в MAX мессенджер"
       >
         <PhoneCall className={iconSizes} />
-        {showLabels && <span>MAX</span>}
+        {showLabels && <span className="hidden sm:inline">MAX</span>}
       </a>
     </div>
   );

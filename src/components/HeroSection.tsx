@@ -1,9 +1,8 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Building2, Factory, ArrowRight, ShieldCheck, Phone } from 'lucide-react';
+import { Building2, Factory, ArrowRight, ShieldCheck } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../data';
-import { MessengerButtons } from './MessengerButtons';
 
 interface HeroSectionProps {
   onScrollToProducts?: () => void;
@@ -74,28 +73,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <Factory className="w-4 sm:w-5 h-4 sm:h-5 text-emerald-600" />
               <span>Каталог матов и цены</span>
             </button>
-          </div>
-
-          {/* Direct Phone & Messenger Banner */}
-          <div className="bg-[#E4EDFE] text-slate-900 p-4 sm:p-5 rounded-2xl mb-10 border border-slate-300 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-emerald-600/20 text-emerald-700 flex items-center justify-center border border-emerald-600/30 flex-shrink-0 animate-pulse">
-                <Phone className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Прямая линия завода (РФ)</span>
-                <a 
-                  href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} 
-                  className="font-headline text-xl sm:text-2xl font-extrabold text-black border-black hover:text-emerald-700 transition-colors tracking-tight"
-                >
-                  {settings.phone}
-                </a>
-              </div>
-            </div>
-            <div className="w-full sm:w-auto flex flex-col items-start sm:items-end gap-1.5">
-              <span className="text-[10px] text-slate-600 font-bold uppercase tracking-wider">Быстрый ответ в мессенджерах:</span>
-              <MessengerButtons phone={settings.phone} size="sm" layout="wrap" />
-            </div>
           </div>
 
           {/* Quick Stats Row */}

@@ -2,18 +2,109 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS_DATA, DEFAULT_SETTINGS } from '../data';
 import { Product, SiteSettings } from '../types';
-import { Factory, Search, Check, X } from 'lucide-react';
+import { Factory, Search, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ProductCatalogProps {
   onSelectProductForQuote: (productName: string) => void;
   settings?: SiteSettings;
+  products?: Product[];
 }
+
+const ProductCardImageSlider: React.FC<{
+  product: Product;
+  onInspect: () => void;
+}> = ({ product, onInspect }) => {
+  const images = product.images && product.images.length > 0 ? product.images : [product.imageUrl];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const prevSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const nextSlide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  return (
+    <div 
+      className="lg:col-span-5 relative aspect-[16/10] lg:aspect-auto min-h-[250px] sm:min-h-[290px] lg:min-h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-900 group cursor-pointer select-none"
+      onClick={onInspect}
+    >
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={currentIndex}
+          src={images[currentIndex]}
+          alt={`${product.title} - фото ${currentIndex + 1}`}
+          referrerPolicy="no-referrer"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 absolute inset-0"
+        />
+      </AnimatePresence>
+
+      <div className="absolute top-3.5 left-3.5 bg-slate-900/85 text-white font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg backdrop-blur-xs shadow-sm z-10 border border-slate-700">
+        {product.thickness}
+      </div>
+
+      {images.length > 1 && (
+        <>
+          {/* Left Arrow */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-xs border border-white/20 shadow-md transition-all z-20 hover:scale-110 active:scale-95 cursor-pointer"
+            title="Предыдущее фото"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={nextSlide}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-xs border border-white/20 shadow-md transition-all z-20 hover:scale-110 active:scale-95 cursor-pointer"
+            title="Следующее фото"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          {/* Indicators / Dots */}
+          <div className="absolute bottom-3.5 left-3.5 flex items-center gap-1.5 z-20 bg-slate-900/80 backdrop-blur-xs px-2.5 py-1.5 rounded-full border border-white/10">
+            {images.map((_, idx) => (
+              <span
+                key={idx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentIndex(idx);
+                }}
+                className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
+                  currentIndex === idx ? 'w-5 bg-emerald-400' : 'bg-white/50 hover:bg-white'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      <div className="absolute bottom-3.5 right-3.5 bg-white/95 hover:bg-white text-emerald-600 font-extrabold text-[11px] sm:text-xs p-2 sm:px-3.5 sm:py-2 rounded-xl shadow-md flex items-center gap-1.5 border border-slate-200 z-10 transition-transform group-hover:scale-105" title="Увеличить фото и чертеж">
+        <Search className="w-4 h-4 sm:w-4 sm:h-4" />
+        <span className="hidden sm:inline">Увеличить фото и чертеж</span>
+      </div>
+    </div>
+  );
+};
 
 export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   onSelectProductForQuote,
-  settings = DEFAULT_SETTINGS
+  settings = DEFAULT_SETTINGS,
+  products
 }) => {
   const [selectedProductInspect, setSelectedProductInspect] = useState<Product | null>(null);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
+
+  const catalogList = products && products.length > 0 ? products : PRODUCTS_DATA;
 
   return (
     <motion.section
@@ -39,34 +130,24 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         </div>
 
         <div className="grid grid-cols-1 gap-8 max-w-[1200px] w-full mx-auto">
-          {PRODUCTS_DATA.map((prod) => (
+          {catalogList.map((prod) => (
             <motion.div
               key={prod.id}
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
               className="bg-slate-50/90 rounded-3xl border border-slate-200 overflow-hidden shadow-organic-lg grid grid-cols-1 lg:grid-cols-12"
             >
-              {/* Left: Image */}
-              <div 
-                className="lg:col-span-5 relative aspect-[16/10] lg:aspect-auto min-h-[220px] sm:min-h-[260px] lg:min-h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-100 group cursor-pointer"
-                onClick={() => setSelectedProductInspect(prod)}
-              >
-                <img
-                  src={prod.imageUrl}
-                  alt={prod.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 absolute inset-0"
-                />
-                <div className="absolute top-3.5 left-3.5 bg-slate-900/85 text-white font-mono text-[11px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg backdrop-blur-xs shadow-sm z-10 border border-slate-700">
-                  {prod.thickness}
-                </div>
-                <div className="absolute bottom-3.5 right-3.5 bg-white/95 hover:bg-white text-emerald-600 font-extrabold text-[11px] sm:text-xs px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl shadow-md flex items-center gap-1.5 border border-slate-200 z-10 transition-transform group-hover:scale-105">
-                  <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  <span>Увеличить фото и чертеж</span>
-                </div>
-              </div>
+              {/* Left: Image Slider */}
+              <ProductCardImageSlider
+                product={prod}
+                onInspect={() => {
+                  setSelectedProductInspect(prod);
+                  setModalImageIndex(0);
+                }}
+              />
 
               {/* Right: Content & Specs */}
-              <div className="lg:col-span-7 p-5 sm:p-8 flex flex-col justify-between">
+              <div className="lg:col-span-7 p-5 sm:p-8 flex flex-col justify-start">
                 <div>
                   <h3 className="font-headline text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
                     {prod.title}
@@ -96,14 +177,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   </ul>
                 </div>
 
-                <div className="pt-5 border-t border-slate-200/80 flex flex-wrap sm:flex-nowrap gap-4 items-center justify-between">
+                <div className="pt-5 border-t border-slate-200/80 flex flex-col justify-start gap-4 items-stretch">
                   <div className="flex items-center gap-2 text-xs font-extrabold text-slate-600">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span>{prod.warranty}</span>
                   </div>
-                  <div className="flex gap-3 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row justify-start gap-3 w-full">
                     <button
-                      onClick={() => setSelectedProductInspect(prod)}
+                      onClick={() => {
+                        setSelectedProductInspect(prod);
+                        setModalImageIndex(0);
+                      }}
                       className="px-5 py-3.5 border border-slate-300 hover:border-emerald-600 bg-white rounded-xl font-bold text-xs sm:text-sm text-slate-800 transition-all shadow-2xs hover:shadow-sm cursor-pointer flex items-center gap-1.5"
                     >
                       <span>Характеристики</span>
@@ -132,13 +216,58 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-slate-200"
               >
                 <div className="grid md:grid-cols-2">
-                  <div className="relative bg-slate-900 p-6 text-white flex flex-col justify-between aspect-square md:aspect-auto">
-                    <img
-                      src={selectedProductInspect.imageUrl}
-                      alt={selectedProductInspect.title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-60"
-                    />
-                    <div className="relative z-10">
+                  <div className="relative bg-slate-950 p-6 text-white flex flex-col justify-between min-h-[300px] md:min-h-full aspect-square md:aspect-auto overflow-hidden select-none">
+                    {(() => {
+                      const mImages = selectedProductInspect.images && selectedProductInspect.images.length > 0
+                        ? selectedProductInspect.images
+                        : [selectedProductInspect.imageUrl];
+                      return (
+                        <>
+                          <AnimatePresence mode="wait">
+                            <motion.img
+                              key={modalImageIndex}
+                              src={mImages[modalImageIndex]}
+                              alt={`${selectedProductInspect.title} - фото ${modalImageIndex + 1}`}
+                              referrerPolicy="no-referrer"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 0.65 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                          </AnimatePresence>
+
+                          {mImages.length > 1 && (
+                            <>
+                              <button
+                                onClick={() => setModalImageIndex((prev) => (prev - 1 + mImages.length) % mImages.length)}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-xs border border-white/20 shadow-md transition-all z-20 hover:scale-110 active:scale-95 cursor-pointer"
+                              >
+                                <ChevronLeft className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => setModalImageIndex((prev) => (prev + 1) % mImages.length)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur-xs border border-white/20 shadow-md transition-all z-20 hover:scale-110 active:scale-95 cursor-pointer"
+                              >
+                                <ChevronRight className="w-5 h-5" />
+                              </button>
+                              <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-slate-900/80 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/10">
+                                {mImages.map((_, idx) => (
+                                  <span
+                                    key={idx}
+                                    onClick={() => setModalImageIndex(idx)}
+                                    className={`w-2 h-2 rounded-full cursor-pointer transition-all ${
+                                      modalImageIndex === idx ? 'w-5 bg-emerald-400' : 'bg-white/50 hover:bg-white'
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </>
+                      );
+                    })()}
+                    <div className="relative z-10 flex justify-between items-center">
                       <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2.5 py-1 rounded shadow-xs">
                         Технический паспорт
                       </span>
@@ -181,7 +310,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       }}
                       className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
                     >
-                      Рассчитать стоимость для этого мата
+                      Рассчитать стоимость для этой продукции
                     </button>
                   </div>
                 </div>

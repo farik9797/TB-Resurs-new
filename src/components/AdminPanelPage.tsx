@@ -1,23 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LeadItem, SiteSettings, AdminUser } from '../types';
-import { DEFAULT_SETTINGS } from '../data';
+import { LeadItem, SiteSettings, AdminUser, Product } from '../types';
+import { DEFAULT_SETTINGS, PRODUCTS_DATA } from '../data';
+import { AdminProductsEditor } from './AdminProductsEditor';
 import { 
   Lock, User, Key, LogIn, LogOut, ArrowLeft, RefreshCw, Building2, 
   FileSpreadsheet, Phone, Mail, MapPin, Clock, Send, Image, FileText, 
-  BarChart3, Globe, Code, Check, Save, Inbox, LayoutTemplate, Users, UserPlus, Trash2, ShieldAlert
+  BarChart3, Globe, Code, Check, Save, Inbox, LayoutTemplate, Users, UserPlus, Trash2, ShieldAlert, Package
 } from 'lucide-react';
 
 interface AdminPanelPageProps {
   onBackToSite: () => void;
   settings?: SiteSettings;
   onSaveSettings?: (newSettings: SiteSettings) => void;
+  products?: Product[];
+  onSaveProducts?: (newProducts: Product[]) => void;
 }
 
 export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   onBackToSite,
   settings = DEFAULT_SETTINGS,
-  onSaveSettings
+  onSaveSettings,
+  products = PRODUCTS_DATA,
+  onSaveProducts
 }) => {
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
     try {
@@ -34,11 +39,14 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Dashboard state
-  const [activeTab, setActiveTab] = useState<'leads' | 'contacts' | 'branding' | 'content' | 'seo' | 'users'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'products' | 'contacts' | 'branding' | 'content' | 'seo' | 'users'>('leads');
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [usersList, setUsersList] = useState<AdminUser[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(false);
   const [serverHealth, setServerHealth] = useState<any>(null);
+
+  // Products state
+  const [productsList, setProductsList] = useState<Product[]>(products);
 
   // Settings editor state
   const [formData, setFormData] = useState<SiteSettings>(settings);
@@ -56,6 +64,10 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   useEffect(() => {
     if (settings) setFormData(settings);
   }, [settings]);
+
+  useEffect(() => {
+    if (products && products.length > 0) setProductsList(products);
+  }, [products]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,6 +218,21 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleSaveProductsCatalog = async (updatedList: Product[]) => {
+    setProductsList(updatedList);
+    try {
+      localStorage.setItem("tb_resurs_products_v2", JSON.stringify(updatedList));
+      try {
+        await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ products: updatedList })
+        });
+      } catch (err) {}
+      if (onSaveProducts) onSaveProducts(updatedList);
+    } catch (e) {}
   };
 
   const handleAddUser = async (e: React.FormEvent) => {
@@ -424,6 +451,17 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
             <span>Заявки ({leads.length})</span>
           </button>
           <button
+            onClick={() => setActiveTab('products')}
+            className={`flex-1 py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
+              activeTab === 'products'
+                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Package className="w-4 h-4" />
+            <span>Товары и слайды ({productsList.length})</span>
+          </button>
+          <button
             onClick={() => setActiveTab('contacts')}
             className={`flex-1 py-3 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'contacts'
@@ -582,6 +620,13 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === 'products' && (
+            <AdminProductsEditor
+              products={productsList}
+              onSaveProducts={handleSaveProductsCatalog}
+            />
           )}
 
           {activeTab === 'contacts' && (

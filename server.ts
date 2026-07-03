@@ -5,6 +5,9 @@ import { createServer as createViteServer } from "vite";
 
 const SETTINGS_FILE = path.join(process.cwd(), "settings.json");
 const USERS_FILE = path.join(process.cwd(), "users.json");
+const PRODUCTS_FILE = path.join(process.cwd(), "products.json");
+
+let currentProducts: any[] | null = null;
 
 let currentSettings = {
   phone: "+7 915 638-72-59",
@@ -65,8 +68,15 @@ try {
       adminUsers = loaded;
     }
   }
+  if (fs.existsSync(PRODUCTS_FILE)) {
+    const data = fs.readFileSync(PRODUCTS_FILE, "utf-8");
+    const loaded = JSON.parse(data);
+    if (Array.isArray(loaded) && loaded.length > 0) {
+      currentProducts = loaded;
+    }
+  }
 } catch (e) {
-  console.log("Using default settings and users");
+  console.log("Using default settings, users and products");
 }
 
 
@@ -200,6 +210,35 @@ async function startServer() {
       });
     } catch (err) {
       res.status(500).json({ success: false, message: "Ошибка сохранения" });
+    }
+  });
+
+  app.get("/api/products", (req, res) => {
+    res.json({
+      success: true,
+      products: currentProducts
+    });
+  });
+
+  app.post("/api/products", (req, res) => {
+    try {
+      const { products } = req.body;
+      if (!Array.isArray(products)) {
+        return res.status(400).json({ success: false, message: "Неверный формат каталога товаров" });
+      }
+      currentProducts = products;
+      try {
+        fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(currentProducts, null, 2), "utf-8");
+      } catch (err) {
+        console.error("Could not write products to disk:", err);
+      }
+      res.json({
+        success: true,
+        message: "Каталог товаров и слайды успешно сохранены",
+        products: currentProducts
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: "Ошибка сохранения каталога" });
     }
   });
 

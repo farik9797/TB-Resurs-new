@@ -121,7 +121,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                 }
               }
             }}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.02] active:scale-95 whitespace-nowrap cursor-pointer flex items-center gap-2 border border-emerald-400/30"
+            className="hidden sm:flex bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.02] active:scale-95 whitespace-nowrap cursor-pointer items-center gap-2 border border-emerald-400/30"
           >
             <span className="w-2 h-2 rounded-full bg-white animate-ping" />
             <span>Оставить заявку</span>

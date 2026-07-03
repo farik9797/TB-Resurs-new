@@ -8,6 +8,7 @@ export interface Product {
   warranty: string;
   description: string;
   imageUrl: string;
+  images?: string[];
   features: string[];
   specs: { label: string; value: string }[];
 }

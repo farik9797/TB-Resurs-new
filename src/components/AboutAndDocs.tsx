@@ -115,8 +115,8 @@ export const AboutAndDocs: React.FC<AboutAndDocsProps> = ({ settings }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 group-hover:border-emerald-600 shadow-2xs">
-                  <span>Посмотреть</span>
+                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-white p-2 sm:px-3 sm:py-1.5 rounded-lg border border-slate-200 group-hover:border-emerald-600 shadow-2xs flex-shrink-0">
+                  <span className="hidden sm:inline">Посмотреть</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </motion.div>

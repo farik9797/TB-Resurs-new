@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
-import { Calculator, Check, MapPin, CheckCircle2, AlertCircle, Send, Phone } from 'lucide-react';
+import { Calculator, Check, MapPin, CheckCircle2, AlertCircle, Send } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../data';
-import { MessengerButtons } from './MessengerButtons';
 
 interface ContactFormProps {
   initialComment?: string;
@@ -17,7 +16,7 @@ interface ContactFormProps {
 export const ContactForm: React.FC<ContactFormProps> = ({
   initialComment = "",
   initialCows,
-  initialProduct = "Маты для стойломест",
+  initialProduct = "Плиты резиновые для стойломест",
   onLeadSubmitted,
   settings = DEFAULT_SETTINGS
 }) => {
@@ -106,7 +105,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       transition={{ duration: 0.7, ease: "easeOut" }}
       className="py-20 px-4 md:px-8 max-w-7xl mx-auto"
     >
-      <div className="bg-[#E4EDFE] rounded-3xl p-6 sm:p-10 lg:p-16 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center shadow-organic-lg relative overflow-hidden border border-[#c8dbfc]">
+      <div className="bg-[#E4EDFE] rounded-3xl px-[10px] py-6 sm:p-10 lg:p-16 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center shadow-organic-lg relative overflow-hidden border border-[#c8dbfc]">
         
         {/* Subtle background glow */}
         <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
@@ -147,23 +146,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           </ul>
 
           <div className="pt-6 border-t border-[#c8dbfc] space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/80 p-4 rounded-2xl border border-[#c8dbfc] shadow-2xs">
-              <div>
-                <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block">Горячая линия завода:</span>
-                <a 
-                  href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} 
-                  className="flex items-center gap-2 font-headline font-extrabold text-slate-900 hover:text-emerald-600 transition-colors tracking-tight"
-                >
-                  <Phone className="w-5 h-5 text-emerald-600 animate-pulse" />
-                  <span className="text-[19px]" style={{ fontSize: '19px' }}>{settings.phone}</span>
-                </a>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Мессенджеры:</span>
-                <MessengerButtons phone={settings.phone} size="sm" />
-              </div>
-            </div>
-
             <div className="text-xs text-slate-700 flex items-start gap-1.5 px-1">
               <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
               <div>
@@ -175,7 +157,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
         </div>
 
         {/* Right Column Form */}
-        <div className="lg:col-span-6 bg-white p-6 sm:p-8 rounded-3xl shadow-2xl relative z-10 border border-slate-200">
+        <div className="lg:col-span-6 bg-white px-[10px] pt-[24px] pb-6 sm:p-8 rounded-3xl shadow-2xl relative z-10 border border-slate-200 w-full">
           {submittedTicket ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -206,9 +188,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+              <div className="pb-2 border-b border-slate-200">
                 <span className="font-headline font-bold text-lg text-slate-900">Форма обратной связи</span>
-                <span className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded border border-emerald-100 font-bold">Быстрый ответ</span>
               </div>
 
               {error && (

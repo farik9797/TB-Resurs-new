@@ -15,8 +15,8 @@ import { AdminPanelPage } from './components/AdminPanelPage';
 import { LeadPopupModal } from './components/LeadPopupModal';
 import { Footer } from './components/Footer';
 import { FloatingContactHub } from './components/FloatingContactHub';
-import { SiteSettings } from './types';
-import { DEFAULT_SETTINGS } from './data';
+import { SiteSettings, Product } from './types';
+import { DEFAULT_SETTINGS, PRODUCTS_DATA } from './data';
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(window.location.pathname);
@@ -55,10 +55,21 @@ export default function App() {
     return DEFAULT_SETTINGS;
   });
 
+  const [products, setProducts] = useState<Product[]>(() => {
+    try {
+      const saved = localStorage.getItem("tb_resurs_products_v2");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return PRODUCTS_DATA;
+  });
+
   // State to pass preselected product or calculation to Contact Form
   const [formComment, setFormComment] = useState<string>("");
   const [formCows, setFormCows] = useState<number | undefined>(undefined);
-  const [formProduct, setFormProduct] = useState<string>("Маты для стойломест «Комфорт-Плюс»");
+  const [formProduct, setFormProduct] = useState<string>("Плиты резиновые для стойломест");
 
   const fetchLeadsCount = async () => {
     try {
@@ -99,9 +110,27 @@ export default function App() {
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products");
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.products) && json.products.length > 0) {
+          // Verify if it's not the old outdated data before setting
+          const isOldFormat = json.products.some((p: any) => p.title?.includes("Маты для стойломест"));
+          if (!isOldFormat) {
+            setProducts(json.products);
+            localStorage.setItem("tb_resurs_products_v2", JSON.stringify(json.products));
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
   useEffect(() => {
     fetchLeadsCount();
     fetchSettings();
+    fetchProducts();
   }, []);
 
   // Dynamically inject SEO codes and update document title whenever settings change
@@ -207,6 +236,8 @@ export default function App() {
         }}
         settings={settings}
         onSaveSettings={(newSettings) => setSettings(newSettings)}
+        products={products}
+        onSaveProducts={(newProducts) => setProducts(newProducts)}
       />
     );
   }
@@ -237,6 +268,7 @@ export default function App() {
         <ProductCatalog
           onSelectProductForQuote={handleSelectProductForQuote}
           settings={settings}
+          products={products}
         />
 
         <InteractiveFarmMap
@@ -273,19 +305,6 @@ export default function App() {
           setIsLeadPopupOpen(true);
         }}
       />
-
-      {/* Floating Action Button for lead generation (Right) */}
-      <button
-        onClick={() => {
-          setPopupProduct("Быстрый расчет с сайта");
-          setIsLeadPopupOpen(true);
-        }}
-        className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-3.5 rounded-full shadow-2xl shadow-emerald-600/40 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 border-2 border-white/40 cursor-pointer"
-        title="Быстрый расчет цены"
-      >
-        <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping" />
-        <span className="text-sm">Оставить заявку</span>
-      </button>
 
       <LeadPopupModal
         isOpen={isLeadPopupOpen}

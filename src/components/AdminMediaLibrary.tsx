@@ -40,10 +40,28 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
         const resultUrl = event.target?.result as string;
         if (!resultUrl) return reject(new Error("Не удалось прочитать файл"));
 
+        // If SVG or icon or small file (< 500 KB), save directly without converting format or losing transparency/quality
+        const lowerName = file.name.toLowerCase();
+        if (
+          file.type === "image/svg+xml" ||
+          lowerName.endsWith(".svg") ||
+          lowerName.endsWith(".ico") ||
+          file.size < 500 * 1024
+        ) {
+          const approxSizeKb = Math.max(1, Math.round(file.size / 1024));
+          return resolve({
+            id: `media-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            name: file.name,
+            url: resultUrl,
+            size: `${approxSizeKb} KB`,
+            uploadedAt: new Date().toLocaleDateString("ru-RU")
+          });
+        }
+
         const img = new Image();
         img.src = resultUrl;
         img.onload = () => {
-          const maxDim = 1000; // Optimal resolution for fast loading and storage efficiency
+          const maxDim = 1200; // Optimal resolution for fast loading and storage efficiency
           let width = img.width;
           let height = img.height;
 
@@ -63,8 +81,11 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
           const ctx = canvas.getContext("2d");
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            // Convert to JPEG quality 0.78
-            const compressedUrl = canvas.toDataURL("image/jpeg", 0.78);
+            // Preserve PNG/WEBP format & transparency
+            const isPngOrWebp = file.type === "image/png" || file.type === "image/webp" || lowerName.endsWith(".png") || lowerName.endsWith(".webp");
+            const compressedUrl = isPngOrWebp 
+              ? canvas.toDataURL(file.type || "image/png") 
+              : canvas.toDataURL("image/jpeg", 0.82);
             const approxSizeKb = Math.round((compressedUrl.length * 0.75) / 1024);
             resolve({
               id: `media-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -99,7 +120,8 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
       const newItems: MediaItem[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (!file.type.startsWith("image/")) continue;
+        const lowerName = file.name.toLowerCase();
+        if (!file.type.startsWith("image/") && !lowerName.endsWith(".svg")) continue;
         const processed = await processImageFile(file);
         newItems.push(processed);
       }
@@ -155,7 +177,7 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
             type="file"
             ref={fileInputRef}
             onChange={handleFileUpload}
-            accept="image/*"
+            accept="image/*, .svg, .png, .jpg, .jpeg, .webp"
             multiple
             className="hidden"
           />
@@ -193,7 +215,7 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
           Нажмите сюда, чтобы выбрать файлы с вашего компьютера
         </p>
         <p className="text-xs text-slate-400">
-          Поддерживаются PNG, JPG, WEBP. Изображения автоматически оптимизируются для высокой скорости загрузки.
+          Поддерживаются SVG, PNG, JPG, WEBP. Векторные логотипы и картинки с прозрачностью сохраняют свой формат.
         </p>
       </div>
 
@@ -376,3 +398,5 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({
     </div>
   );
 };
+
+export { MediaGallery, type MediaGalleryProps } from './MediaGallery';

@@ -4,6 +4,8 @@ import { LeadItem, SiteSettings, AdminUser, Product, MediaItem } from '../types'
 import { DEFAULT_SETTINGS, PRODUCTS_DATA, DEFAULT_MEDIA_LIBRARY } from '../data';
 import { AdminProductsEditor } from './AdminProductsEditor';
 import { AdminMediaLibrary } from './AdminMediaLibrary';
+import { MediaGallery, type MediaGalleryProps } from './MediaGallery';
+export { MediaGallery, type MediaGalleryProps };
 import { saveMediaToIDB, loadMediaFromIDB } from '../lib/idbStorage';
 import { 
   Lock, User, Key, LogIn, LogOut, ArrowLeft, RefreshCw, Building2, 
@@ -64,6 +66,7 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
   const [formData, setFormData] = useState<SiteSettings>(settings);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showLogoPicker, setShowLogoPicker] = useState(false);
 
   // Add user form state
   const [newLogin, setNewLogin] = useState("");
@@ -690,7 +693,7 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
           )}
 
           {activeTab === 'media' && (
-            <AdminMediaLibrary
+            <MediaGallery
               mediaList={mediaList}
               onSaveMedia={handleSaveMedia}
             />
@@ -804,15 +807,25 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
                   <Image className="w-4 h-4 text-emerald-400" />
-                  <span>URL логотипа (PNG / SVG / WebP)</span>
+                  <span>URL логотипа (SVG / PNG / JPG / WebP)</span>
                 </label>
-                <input
-                  type="url"
-                  value={formData.logoUrl || ""}
-                  onChange={e => setFormData({ ...formData, logoUrl: e.target.value })}
-                  placeholder="https://example.com/logo.png"
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-mono focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <input
+                    type="text"
+                    value={formData.logoUrl || ""}
+                    onChange={e => setFormData({ ...formData, logoUrl: e.target.value })}
+                    placeholder="https://... или выберите из Медиатеки"
+                    className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-mono focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLogoPicker(true)}
+                    className="px-4 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 hover:text-white font-bold text-xs sm:text-sm rounded-xl border border-emerald-500/30 flex items-center justify-center gap-2 whitespace-nowrap transition-colors cursor-pointer"
+                  >
+                    <HardDrive className="w-4 h-4" />
+                    <span>Из Медиатеки</span>
+                  </button>
+                </div>
                 {formData.logoUrl && (
                   <div className="mt-3 p-4 rounded-2xl border border-slate-800 bg-slate-900 flex items-center gap-4">
                     <img src={formData.logoUrl} alt="Logo Preview" className="h-12 w-auto object-contain bg-white/10 p-1 rounded-lg" />
@@ -1284,6 +1297,31 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
           )}
         </div>
       </div>
+
+      {/* Logo Picker Modal */}
+      <AnimatePresence>
+        {showLogoPicker && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            >
+              <MediaGallery
+                mediaList={mediaList}
+                onSaveMedia={handleSaveMedia}
+                isModalPicker={true}
+                onSelectMedia={(url) => {
+                  setFormData({ ...formData, logoUrl: url });
+                  setShowLogoPicker(false);
+                }}
+                onCloseModal={() => setShowLogoPicker(false)}
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

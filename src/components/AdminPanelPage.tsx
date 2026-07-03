@@ -616,7 +616,7 @@ export const AdminPanelPage: React.FC<AdminPanelPageProps> = ({
                     required
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+7 (800) 555-35-35"
+                    placeholder="+7 915 638-72-59"
                     className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-medium focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>

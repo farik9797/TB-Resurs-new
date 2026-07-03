@@ -7,9 +7,9 @@ const SETTINGS_FILE = path.join(process.cwd(), "settings.json");
 const USERS_FILE = path.join(process.cwd(), "users.json");
 
 let currentSettings = {
-  phone: "+7 (800) 555-35-35",
+  phone: "+7 915 638-72-59",
   emailForLeads: "info@tb-resurs.ru",
-  telegramForLeads: "@tbresurs_bot",
+  telegramForLeads: "https://t.me/+79156387259",
   address: "Республика Татарстан, г. Казань / Кукморский р-н, ул. Заводская, 12",
   workHours: "Пн-Пт с 08:00 до 17:00 (МСК)",
   heroTitle: "Резиновые маты для КРС от завода «ТБ-Ресурс»",
@@ -53,6 +53,9 @@ try {
     currentSettings = { ...currentSettings, ...JSON.parse(data) };
     if (currentSettings.heroImageUrl?.includes("1516467508483")) {
       currentSettings.heroImageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAE2q1CPL-oks8xFDApaqPc9Y4F_aPmcYO72sX8xUNXtKHwBKj4EiUwZK3ccFIIf6S9egbDhBqflR1SpNlpDUnnYvq4aEWb2MaUPjlOGa3YlerK894XIKKLGkrQISU0QxTrOicHNGn0Av2fgACdXNnUFCyI6MfqeI0VNbDCSKjnEIDe7hauL444bRyk2il7R4D08MEVemtk8wGkKuu1wND9bK-_caSNgCMJHgjrxP2cEioVCefOc7WSuQ";
+    }
+    if (currentSettings.phone?.includes("800") || currentSettings.phone?.includes("555")) {
+      currentSettings.phone = "+7 915 638-72-59";
     }
   }
   if (fs.existsSync(USERS_FILE)) {

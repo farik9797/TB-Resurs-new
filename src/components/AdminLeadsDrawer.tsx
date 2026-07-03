@@ -343,7 +343,7 @@ export const AdminLeadsDrawer: React.FC<AdminLeadsDrawerProps> = ({
                         required
                         value={formData.phone}
                         onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="+7 (800) 555-35-35"
+                        placeholder="+7 915 638-72-59"
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:bg-white focus:border-emerald-600 focus:outline-none"
                       />
                     </div>

@@ -1,7 +1,8 @@
 import React from 'react';
-import { ShieldCheck, Mail, MapPin, Clock } from 'lucide-react';
+import { ShieldCheck, Mail, MapPin, Clock, Phone } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../data';
+import { MessengerButtons } from './MessengerButtons';
 
 interface FooterProps {
   settings?: SiteSettings;
@@ -54,12 +55,17 @@ export const Footer: React.FC<FooterProps> = ({ settings = DEFAULT_SETTINGS }) =
         </div>
 
         <div className="md:col-span-4">
-          <h4 className="font-headline font-bold text-lg text-white mb-4">Контакты завода</h4>
-          <div className="space-y-3 text-sm">
-            <a href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} className="block font-headline text-2xl font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
-              {settings.phone}
+          <h4 className="font-headline font-bold text-lg text-white mb-3">Контакты завода</h4>
+          <div className="space-y-3.5 text-sm">
+            <a href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} className="flex items-center gap-2 font-headline text-2xl font-extrabold text-emerald-400 hover:text-emerald-300 transition-colors">
+              <Phone className="w-5 h-5 animate-pulse" />
+              <span>{settings.phone}</span>
             </a>
-            <p className="text-xs text-slate-400 font-normal flex items-center gap-2">
+            <div className="pt-1">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1.5">Связаться в мессенджерах:</span>
+              <MessengerButtons phone={settings.phone} size="sm" layout="wrap" />
+            </div>
+            <p className="text-xs text-slate-400 font-normal flex items-center gap-2 pt-1">
               <Mail className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
               <span>{settings.emailForLeads}</span>
             </p>
@@ -77,8 +83,8 @@ export const Footer: React.FC<FooterProps> = ({ settings = DEFAULT_SETTINGS }) =
         <div className="md:col-span-3">
           <h4 className="font-headline font-bold text-lg text-white mb-4">Навигация</h4>
           <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
-            <li><a href="#applications" onClick={(e) => handleNavClick(e, 'applications')} className="hover:text-white transition-colors cursor-pointer">Зоны применения</a></li>
             <li><a href="#products" onClick={(e) => handleNavClick(e, 'products')} className="hover:text-white transition-colors cursor-pointer">Виды продукции</a></li>
+            <li><a href="#applications" onClick={(e) => handleNavClick(e, 'applications')} className="hover:text-white transition-colors cursor-pointer">Зоны применения</a></li>
             <li><a href="#features" onClick={(e) => handleNavClick(e, 'features')} className="hover:text-white transition-colors cursor-pointer">Преимущества и гарантия</a></li>
             <li><a href="#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-white transition-colors cursor-pointer">О заводе</a></li>
             <li><a href="#faq" onClick={(e) => handleNavClick(e, 'faq')} className="hover:text-white transition-colors cursor-pointer">Частые вопросы</a></li>

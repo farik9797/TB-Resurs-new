@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
-import { Calculator, Check, MapPin, CheckCircle2, AlertCircle, Send } from 'lucide-react';
+import { Calculator, Check, MapPin, CheckCircle2, AlertCircle, Send, Phone } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../data';
+import { MessengerButtons } from './MessengerButtons';
 
 interface ContactFormProps {
   initialComment?: string;
@@ -105,58 +106,69 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       transition={{ duration: 0.7, ease: "easeOut" }}
       className="py-20 px-4 md:px-8 max-w-7xl mx-auto"
     >
-      <div className="bg-slate-900 rounded-3xl p-6 sm:p-10 lg:p-16 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center shadow-organic-lg relative overflow-hidden border border-slate-800">
+      <div className="bg-[#E4EDFE] rounded-3xl p-6 sm:p-10 lg:p-16 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center shadow-organic-lg relative overflow-hidden border border-[#c8dbfc]">
         
         {/* Subtle background glow */}
-        <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Left Column info */}
-        <div className="lg:col-span-6 text-white relative z-10">
-          <span className="text-xs uppercase font-mono tracking-wider bg-white/10 text-emerald-300 px-3 py-1 rounded-full inline-flex items-center gap-1.5 mb-4 border border-white/10">
-            <Calculator className="w-3.5 h-3.5 text-emerald-300" />
+        <div className="lg:col-span-6 text-slate-900 relative z-10">
+          <span className="text-xs uppercase font-mono tracking-wider bg-emerald-600/10 text-emerald-800 px-3 py-1 rounded-full inline-flex items-center gap-1.5 mb-4 border border-emerald-600/20">
+            <Calculator className="w-3.5 h-3.5 text-emerald-700" />
             <span>Прямой расчет без наценок</span>
           </span>
-          <h2 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+          <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 sm:mb-6 leading-tight text-slate-900">
             Получить расчёт под вашу ферму
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-300 mb-8 leading-relaxed max-w-md font-normal">
+          <p className="text-xs sm:text-sm md:text-base text-slate-700 mb-6 sm:mb-8 leading-relaxed max-w-md font-normal">
             Оставьте контакты для бесплатной консультации инженера-технолога. Мы учтем породу скота, габариты стойл и тип назовоудаления.
           </p>
 
-          <ul className="space-y-4 mb-8">
+          <ul className="space-y-3 sm:space-y-4 mb-8">
             <li className="flex items-start gap-3">
               <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
                 <Check className="w-3.5 h-3.5" />
               </span>
-              <span className="text-sm text-slate-200">Подбор оптимальной толщины (20мм / 24мм / 30мм)</span>
+              <span className="text-xs sm:text-sm text-slate-800 leading-snug">Подбор оптимальной толщины (20мм / 24мм / 30мм)</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
                 <Check className="w-3.5 h-3.5" />
               </span>
-              <span className="text-sm text-slate-200">Расчёт точной стоимости логистики до вашего хозяйства</span>
+              <span className="text-xs sm:text-sm text-slate-800 leading-snug">Расчёт точной стоимости логистики до вашего хозяйства</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
                 <Check className="w-3.5 h-3.5" />
               </span>
-              <span className="text-sm text-slate-200">Персональная заводская скидка от объема заказа</span>
+              <span className="text-xs sm:text-sm text-slate-800 leading-snug">Персональная заводская скидка от объема заказа</span>
             </li>
           </ul>
 
-          <div className="pt-6 border-t border-slate-800 flex flex-wrap items-center gap-6">
-            <div>
-              <p className="text-xs text-slate-400 font-medium">Горячая линия завода:</p>
-              <a href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} className="font-headline text-xl sm:text-2xl font-bold hover:text-emerald-400 transition-colors">
-                {settings.phone}
-              </a>
+          <div className="pt-6 border-t border-[#c8dbfc] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/80 p-4 rounded-2xl border border-[#c8dbfc] shadow-2xs">
+              <div>
+                <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block">Горячая линия завода:</span>
+                <a 
+                  href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} 
+                  className="flex items-center gap-2 font-headline font-extrabold text-slate-900 hover:text-emerald-600 transition-colors tracking-tight"
+                >
+                  <Phone className="w-5 h-5 text-emerald-600 animate-pulse" />
+                  <span className="text-[19px]" style={{ fontSize: '19px' }}>{settings.phone}</span>
+                </a>
+              </div>
+              <div>
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Мессенджеры:</span>
+                <MessengerButtons phone={settings.phone} size="sm" />
+              </div>
             </div>
-            <div className="text-xs text-slate-300 flex items-start gap-1.5">
-              <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+
+            <div className="text-xs text-slate-700 flex items-start gap-1.5 px-1">
+              <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p>{settings.address}</p>
-                <p className="font-mono mt-0.5 text-emerald-300">{settings.emailForLeads}</p>
+                <p className="font-mono mt-0.5 font-bold text-emerald-800">{settings.emailForLeads}</p>
               </div>
             </div>
           </div>
@@ -224,7 +236,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
                   <input
                     type="tel"
                     required
-                    placeholder="+7 (999) 000-00-00"
+                    placeholder="+7 915 638-72-59"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full h-12 px-4 border border-slate-200 rounded-xl focus:border-emerald-600 focus:outline-none bg-slate-50 text-sm text-slate-900 font-mono transition-colors"

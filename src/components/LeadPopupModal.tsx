@@ -173,7 +173,7 @@ export const LeadPopupModal: React.FC<LeadPopupModalProps> = ({
                         required
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+7 (999) 000-00-00"
+                        placeholder="+7 915 638-72-59"
                         className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-medium text-slate-900 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
                       />
                     </div>
@@ -222,10 +222,7 @@ export const LeadPopupModal: React.FC<LeadPopupModalProps> = ({
                     >
                       <option value="Консультация и подбор покрытия">Консультация и подбор покрытия</option>
                       <option value="Маты для стойломест «Комфорт-Плюс»">Маты для стойломест «Комфорт-Плюс»</option>
-                      <option value="Маты для навозных проходов и галерей">Маты для навозных проходов и галерей</option>
-                      <option value="Покрытия для доильного зала и накопителя">Покрытия для доильного зала и накопителя</option>
-                      <option value="Рулонная резина для скотопрогонов">Рулонная резина для скотопрогонов</option>
-                      <option value="Резиновые маты в родильное отделение">Резиновые маты в родильное отделение</option>
+                      <option value="Маты для проходов, зон ДМБ и скреперных установок">Маты для проходов, зон ДМБ и скреперных установок</option>
                     </select>
                   </div>
 

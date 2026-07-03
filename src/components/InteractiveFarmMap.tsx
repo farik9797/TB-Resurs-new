@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FARM_ZONES } from '../data';
 import { FarmZone, SiteSettings } from '../types';
-import { MapPin, Bed, Footprints, Milk, Users, MoveHorizontal, HeartHandshake, ArrowRight } from 'lucide-react';
+import { MapPin, Bed, Footprints, Milk, Users, MoveHorizontal, HeartHandshake, ArrowRight, ShieldCheck, Award } from 'lucide-react';
 
 interface InteractiveFarmMapProps {
   onSelectZoneForForm: (productName: string) => void;
@@ -30,6 +30,10 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
         return <MoveHorizontal className={iconClass} />;
       case 'calving':
         return <HeartHandshake className={iconClass} />;
+      case 'vet':
+        return <ShieldCheck className={iconClass} />;
+      case 'stables':
+        return <Award className={iconClass} />;
       default:
         return <MapPin className={iconClass} />;
     }
@@ -50,52 +54,52 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
             <MapPin className="w-3.5 h-3.5 text-emerald-600" />
             <span>Интерактивный подбор</span>
           </span>
-          <h2 className="font-headline text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900">
+          <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
             {settings?.mapTitle || "Где применяются наши покрытия"}
           </h2>
-          <p className="text-slate-600 mt-3 max-w-2xl text-base md:text-lg">
+          <p className="text-slate-600 mt-3 max-w-2xl text-xs sm:text-sm md:text-base leading-relaxed">
             {settings?.mapSubtitle || "Нажмите на интересующую зону животноводческого комплекса, чтобы узнать физиологический эффект и рекомендованные параметры мата."}
           </p>
         </div>
       </div>
 
       {/* Interactive Grid & Detail View */}
-      <div className="grid lg:grid-cols-12 gap-8 items-start">
+      <div className="grid lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto">
         
-        {/* Left: 6 Cards Grid selector */}
-        <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+        {/* Left: 2 Main Zone Cards */}
+        <div className="lg:col-span-6 flex flex-col gap-5">
           {FARM_ZONES.map((zone) => {
             const isSelected = selectedZone.id === zone.id;
             return (
               <motion.button
                 key={zone.id}
                 onClick={() => setSelectedZone(zone)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`text-left p-6 rounded-2xl border transition-all cursor-pointer relative overflow-hidden ${
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                className={`text-left p-6 sm:p-7 rounded-3xl border transition-all cursor-pointer relative overflow-hidden ${
                   isSelected
-                    ? "bg-white border-emerald-600 ring-2 ring-emerald-600/20 shadow-organic"
+                    ? "bg-white border-emerald-600 ring-2 ring-emerald-600/20 shadow-organic-lg"
                     : "bg-slate-100/80 hover:bg-white border-slate-200 hover:border-emerald-600/50 shadow-2xs"
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-colors ${
-                    isSelected ? "bg-emerald-600 text-white shadow-sm" : "bg-white text-emerald-600 border border-slate-200"
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+                    isSelected ? "bg-emerald-600 text-white shadow-md" : "bg-white text-emerald-600 border border-slate-200"
                   }`}>
                     {renderZoneIcon(zone.id, isSelected)}
                   </div>
 
                   {isSelected && (
-                    <span className="text-[11px] font-bold uppercase bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                      Выбрано
+                    <span className="text-xs font-bold uppercase bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200 shadow-2xs">
+                      Выбрано для расчета
                     </span>
                   )}
                 </div>
 
-                <h3 className="font-headline font-bold text-lg text-slate-900 mb-1.5">
+                <h3 className="font-headline font-bold text-xl text-slate-900 mb-2">
                   {zone.title}
                 </h3>
-                <p className="text-xs text-slate-500 line-clamp-2">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {zone.description}
                 </p>
               </motion.button>
@@ -104,7 +108,7 @@ export const InteractiveFarmMap: React.FC<InteractiveFarmMapProps> = ({
         </div>
 
         {/* Right: Interactive Detailed Inspector Box */}
-        <div className="lg:col-span-5 sticky top-28">
+        <div className="lg:col-span-6 sticky top-28">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedZone.id}

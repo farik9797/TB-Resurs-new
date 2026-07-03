@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Building2, Factory, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Building2, Factory, ArrowRight, ShieldCheck, Phone } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { DEFAULT_SETTINGS } from '../data';
+import { MessengerButtons } from './MessengerButtons';
 
 interface HeroSectionProps {
   onScrollToProducts?: () => void;
@@ -42,29 +43,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </span>
           </div>
 
-          <h1 className="font-headline text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-slate-900 leading-[1.12] tracking-tight">
-            {settings.heroTitle}
+          <h1
+            className="font-headline font-bold mb-5 sm:mb-6 text-slate-900 text-2xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.18] sm:leading-[1.12] tracking-tight"
+          >
+            {settings.heroTitle.split(/<br\s*\/?>/i).map((line, index, arr) => (
+              <React.Fragment key={index}>
+                {line}
+                {index < arr.length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-600 mb-8 max-w-2xl leading-relaxed font-normal">
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 mb-7 sm:mb-8 max-w-2xl leading-relaxed font-normal">
             {settings.heroSubtitle}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-10">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
             <button
               onClick={onScrollToForm}
-              className="h-[54px] px-8 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-base shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+              className="h-12 sm:h-[56px] px-6 sm:px-8 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-extrabold text-sm sm:text-base shadow-xl shadow-emerald-600/30 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer border border-emerald-400/40"
             >
-              <span>Рассчитать стоимость фермы</span>
-              <ArrowRight className="w-5 h-5" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping" />
+              <span>Оставить заявку на расчет</span>
+              <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5" />
             </button>
             <button
               onClick={onScrollToProducts}
-              className="h-[54px] px-7 border-2 border-slate-200 hover:border-emerald-600 bg-white hover:bg-slate-50 text-slate-800 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 shadow-sm"
+              className="h-12 sm:h-[56px] px-5 sm:px-7 border-2 border-slate-200 hover:border-emerald-600 bg-white hover:bg-slate-50 text-slate-800 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
             >
-              <Factory className="w-5 h-5 text-emerald-600" />
+              <Factory className="w-4 sm:w-5 h-4 sm:h-5 text-emerald-600" />
               <span>Каталог матов и цены</span>
             </button>
+          </div>
+
+          {/* Direct Phone & Messenger Banner */}
+          <div className="bg-[#E4EDFE] text-slate-900 p-4 sm:p-5 rounded-2xl mb-10 border border-slate-300 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-emerald-600/20 text-emerald-700 flex items-center justify-center border border-emerald-600/30 flex-shrink-0 animate-pulse">
+                <Phone className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Прямая линия завода (РФ)</span>
+                <a 
+                  href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} 
+                  className="font-headline text-xl sm:text-2xl font-extrabold text-black border-black hover:text-emerald-700 transition-colors tracking-tight"
+                >
+                  {settings.phone}
+                </a>
+              </div>
+            </div>
+            <div className="w-full sm:w-auto flex flex-col items-start sm:items-end gap-1.5">
+              <span className="text-[10px] text-slate-600 font-bold uppercase tracking-wider">Быстрый ответ в мессенджерах:</span>
+              <MessengerButtons phone={settings.phone} size="sm" layout="wrap" />
+            </div>
           </div>
 
           {/* Quick Stats Row */}
@@ -129,13 +160,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <motion.div 
             animate={{ y: [0, 6, 0] }}
             transition={{ repeat: Infinity, duration: 4.5, delay: 1, ease: "easeInOut" }}
-            className="absolute -bottom-5 -right-3 sm:-right-6 bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 shadow-organic max-w-[210px] z-10"
+            className="absolute -bottom-5 -right-3 sm:-right-6 bg-[#E4EDFE] text-slate-900 p-4 rounded-2xl border border-slate-300 shadow-organic max-w-[210px] z-10"
           >
             <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-200">Амортизация</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span className="text-[10px] uppercase font-mono tracking-wider text-black">Амортизация</span>
             </div>
-            <p className="text-xs font-semibold leading-snug text-slate-200">
+            <p className="text-xs font-semibold leading-snug text-black">
               Шиповое дно 8мм работает как пастбищная почва
             </p>
           </motion.div>

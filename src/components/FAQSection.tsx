@@ -52,10 +52,10 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ settings }) => {
             <HelpCircle className="w-3.5 h-3.5 text-emerald-600" />
             <span>База знаний ТБ-Ресурс</span>
           </span>
-          <h2 className="font-headline text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900">
+          <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
             {settings?.faqTitle || "Часто задаваемые вопросы"}
           </h2>
-          <p className="text-slate-600 text-base mt-4 leading-relaxed font-normal">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base mt-3 sm:mt-4 leading-relaxed font-normal">
             {settings?.faqSubtitle || "Ответы главного технолога завода на ключевые вопросы по укладке, уходу и сроку службы вулканизированных покрытий."}
           </p>
         </motion.div>
@@ -161,15 +161,15 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ settings }) => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="mt-12 p-6 bg-slate-900 rounded-3xl text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl"
+          className="mt-12 p-6 bg-[#E4EDFE] border border-[#c4d7fa] rounded-3xl text-slate-900 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
               <MessageCircleQuestion className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-headline font-bold text-lg">Не нашли ответ на свой вопрос?</h4>
-              <p className="text-xs text-slate-300 mt-0.5">Свяжитесь напрямую с главным инженером завода для индивидуальной консультации</p>
+              <h4 className="font-headline font-bold text-lg text-slate-900">Не нашли ответ на свой вопрос?</h4>
+              <p className="text-xs text-slate-600 font-medium mt-0.5">Свяжитесь напрямую с главным инженером завода для индивидуальной консультации</p>
             </div>
           </div>
           <a

@@ -49,15 +49,15 @@ export const AboutAndDocs: React.FC<AboutAndDocsProps> = ({ settings }) => {
             <MapPin className="w-3.5 h-3.5 text-emerald-600" />
             <span>Республика Татарстан, Кукморский р-н</span>
           </span>
-          <h2 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+          <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-5 sm:mb-6 leading-tight">
             {settings?.aboutTitle ? settings.aboutTitle : (
               <>Производитель — <br /><span className="text-emerald-600">ООО «ТБ-Ресурс»</span></>
             )}
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg mb-6 leading-relaxed font-normal">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base mb-5 sm:mb-6 leading-relaxed font-normal">
             {settings?.aboutText || "Наш специализированный завод расположен в Кукморском районе Республики Татарстан. Мы занимаемся исключительно разработкой и производством высокоплотных изделий из резины для агропромышленного комплекса."}
           </p>
-          <p className="text-slate-600 text-base sm:text-lg mb-8 leading-relaxed font-normal">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base mb-6 sm:mb-8 leading-relaxed font-normal">
             Использование автоматических вулканизационных прессов и первичного сырья позволяет нам достигать плотности и износостойкости, превосходящей многие европейские аналоги при стоимости на 30-40% ниже.
           </p>
 
@@ -145,15 +145,15 @@ export const AboutAndDocs: React.FC<AboutAndDocsProps> = ({ settings }) => {
           </div>
 
           {/* Hosting Deployment Box */}
-          <div className="p-6 bg-slate-900 text-white rounded-3xl shadow-lg border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 bg-[#E4EDFE] text-slate-900 rounded-3xl shadow-md border border-[#c8dbfc] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 flex-shrink-0">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-600/15 text-emerald-700 flex items-center justify-center border border-emerald-600/25 flex-shrink-0">
                 <Server className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-400 font-bold block">Готово к публикации</span>
-                <h4 className="font-headline font-bold text-base mt-0.5">Развертывание на хостинге</h4>
-                <p className="text-xs text-slate-400 mt-0.5">Включен Dockerfile, настройки Vercel и экспорт в Excel</p>
+                <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-800 font-bold block">Готово к публикации</span>
+                <h4 className="font-headline font-bold text-base mt-0.5 text-slate-900">Развертывание на хостинге</h4>
+                <p className="text-xs text-slate-600 mt-0.5">Включен Dockerfile, настройки Vercel и экспорт в Excel</p>
               </div>
             </div>
             <button

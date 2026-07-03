@@ -14,6 +14,7 @@ import { AdminLeadsDrawer } from './components/AdminLeadsDrawer';
 import { AdminPanelPage } from './components/AdminPanelPage';
 import { LeadPopupModal } from './components/LeadPopupModal';
 import { Footer } from './components/Footer';
+import { FloatingContactHub } from './components/FloatingContactHub';
 import { SiteSettings } from './types';
 import { DEFAULT_SETTINGS } from './data';
 
@@ -41,6 +42,12 @@ export default function App() {
         const parsed = JSON.parse(saved);
         if (parsed.heroImageUrl?.includes("1516467508483")) {
           parsed.heroImageUrl = DEFAULT_SETTINGS.heroImageUrl;
+        }
+        if (parsed.phone?.includes("800") || parsed.phone?.includes("555")) {
+          parsed.phone = DEFAULT_SETTINGS.phone;
+          if (parsed.telegramForLeads?.includes("tbresurs_bot")) {
+            parsed.telegramForLeads = DEFAULT_SETTINGS.telegramForLeads;
+          }
         }
         return parsed;
       }
@@ -76,6 +83,12 @@ export default function App() {
           const s = json.settings;
           if (s.heroImageUrl?.includes("1516467508483")) {
             s.heroImageUrl = DEFAULT_SETTINGS.heroImageUrl;
+          }
+          if (s.phone?.includes("800") || s.phone?.includes("555")) {
+            s.phone = DEFAULT_SETTINGS.phone;
+            if (s.telegramForLeads?.includes("tbresurs_bot")) {
+              s.telegramForLeads = DEFAULT_SETTINGS.telegramForLeads;
+            }
           }
           setSettings(s);
           localStorage.setItem("tb_resurs_settings", JSON.stringify(s));
@@ -221,17 +234,17 @@ export default function App() {
 
         <TrustBar />
 
+        <ProductCatalog
+          onSelectProductForQuote={handleSelectProductForQuote}
+          settings={settings}
+        />
+
         <InteractiveFarmMap
           onSelectZoneForForm={handleSelectZoneForForm}
           settings={settings}
         />
 
         <StatsCounter />
-
-        <ProductCatalog
-          onSelectProductForQuote={handleSelectProductForQuote}
-          settings={settings}
-        />
 
         <BentoFeatures />
 
@@ -252,16 +265,25 @@ export default function App() {
 
       <Footer settings={settings} />
 
-      {/* Floating Action Button for lead generation */}
+      {/* Floating Messenger & Phone Hub (Left) */}
+      <FloatingContactHub
+        phone={settings.phone}
+        onOpenLeadForm={() => {
+          setPopupProduct("Быстрый расчет с сайта");
+          setIsLeadPopupOpen(true);
+        }}
+      />
+
+      {/* Floating Action Button for lead generation (Right) */}
       <button
         onClick={() => {
           setPopupProduct("Быстрый расчет с сайта");
           setIsLeadPopupOpen(true);
         }}
-        className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-3.5 rounded-full shadow-2xl shadow-emerald-600/40 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 border-2 border-white/20 cursor-pointer"
+        className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-3.5 rounded-full shadow-2xl shadow-emerald-600/40 flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 border-2 border-white/40 cursor-pointer"
         title="Быстрый расчет цены"
       >
-        <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping" />
+        <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping" />
         <span className="text-sm">Оставить заявку</span>
       </button>
 

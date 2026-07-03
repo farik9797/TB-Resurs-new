@@ -63,7 +63,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             className="flex items-center cursor-pointer group"
           >
             <img 
-              src={settings.logoUrl || "src/assets/images/logo.png"} 
+              src={settings.logoUrl || "/assets/images/logo.png"} 
               alt={settings.logoText || "ТБ-Ресурс"} 
               className="h-11 md:h-12 w-auto object-contain max-w-[350px] transition-transform duration-300 group-hover:scale-105" 
             />

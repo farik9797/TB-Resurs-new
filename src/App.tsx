@@ -61,7 +61,7 @@ export default function App() {
 
   const syncProductSlides = (prods: Product[]): Product[] => {
     if (!Array.isArray(prods) || prods.length === 0) return PRODUCTS_DATA;
-    return prods.map(p => {
+    const synced = prods.map(p => {
       if (p.id === "stalls-mat" || p.id === "corridor-mat") {
         const defProd = PRODUCTS_DATA.find(dp => dp.id === p.id);
         if (defProd) {
@@ -73,6 +73,15 @@ export default function App() {
         }
       }
       return p;
+    });
+    const defaultOrder = PRODUCTS_DATA.map(p => p.id);
+    return synced.sort((a, b) => {
+      const idxA = defaultOrder.indexOf(a.id);
+      const idxB = defaultOrder.indexOf(b.id);
+      if (idxA !== -1 && idxB !== -1) {
+        return idxA - idxB;
+      }
+      return 0;
     });
   };
 

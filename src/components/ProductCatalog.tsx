@@ -13,7 +13,8 @@ interface ProductCatalogProps {
 const ProductCardImageSlider: React.FC<{
   product: Product;
   onInspect: () => void;
-}> = ({ product, onInspect }) => {
+  isAlternated?: boolean;
+}> = ({ product, onInspect, isAlternated = false }) => {
   const images = product.images && product.images.length > 0 ? product.images : [product.imageUrl];
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -29,7 +30,9 @@ const ProductCardImageSlider: React.FC<{
 
   return (
     <div 
-      className="lg:col-span-5 relative aspect-[16/10] lg:aspect-auto min-h-[250px] sm:min-h-[290px] lg:min-h-full overflow-hidden border-b lg:border-b-0 lg:border-r border-slate-200 bg-slate-900 group cursor-pointer select-none"
+      className={`lg:col-span-5 relative aspect-[16/10] lg:aspect-auto min-h-[250px] sm:min-h-[290px] lg:min-h-full overflow-hidden border-b lg:border-b-0 ${
+        isAlternated ? 'lg:border-l lg:border-r-0 lg:order-last' : 'lg:border-r border-slate-200'
+      } border-slate-200 bg-slate-900 group cursor-pointer select-none`}
       onClick={onInspect}
     >
       <AnimatePresence mode="wait">
@@ -130,24 +133,27 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         </div>
 
         <div className="grid grid-cols-1 gap-8 max-w-[1200px] w-full mx-auto">
-          {catalogList.map((prod) => (
-            <motion.div
-              key={prod.id}
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.3 }}
-              className="bg-slate-50/90 rounded-3xl border border-slate-200 overflow-hidden shadow-organic-lg grid grid-cols-1 lg:grid-cols-12"
-            >
-              {/* Left: Image Slider */}
-              <ProductCardImageSlider
-                product={prod}
-                onInspect={() => {
-                  setSelectedProductInspect(prod);
-                  setModalImageIndex(0);
-                }}
-              />
+          {catalogList.map((prod, idx) => {
+            const isAlternated = idx % 2 === 1;
+            return (
+              <motion.div
+                key={prod.id}
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.3 }}
+                className="bg-slate-50/90 rounded-3xl border border-slate-200 overflow-hidden shadow-organic-lg grid grid-cols-1 lg:grid-cols-12"
+              >
+                {/* Left/Right: Image Slider */}
+                <ProductCardImageSlider
+                  product={prod}
+                  isAlternated={isAlternated}
+                  onInspect={() => {
+                    setSelectedProductInspect(prod);
+                    setModalImageIndex(0);
+                  }}
+                />
 
-              {/* Right: Content & Specs */}
-              <div className="lg:col-span-7 p-5 sm:p-8 flex flex-col justify-start">
+                {/* Right/Left: Content & Specs */}
+                <div className={`lg:col-span-7 p-5 sm:p-8 flex flex-col justify-start ${isAlternated ? 'lg:order-first' : ''}`}>
                 <div>
                   <h3 className="font-headline text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
                     {prod.title}
@@ -202,7 +208,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 </div>
               </div>
             </motion.div>
-          ))}
+          ); })}
         </div>
 
         {/* Interactive Relief Inspector Modal */}
